@@ -35,7 +35,8 @@ class ChildCRUD:
         """Fetch all child records."""
         statement = select(ChildDB)
         result = await self.session.exec(statement)  # type: ignore
-        return ChildReadMany(count=len(result.all()), result=result.all())
+        all_result = result.all()
+        return ChildReadMany(count=len(all_result), result=all_result)
 
     async def read_by_uid(self, child_uid: UUID) -> Optional[ChildDB]:
         """Read child by uid."""

@@ -128,6 +128,7 @@ async def test_can_get_section_list(client: AsyncClient, session: AsyncSession):
 
     assert response.status_code == status.HTTP_200_OK, response.json()
     assert response.json()["count"] == 2
+    assert len(response.json()["result"]) == 2
     assert isinstance(response.json()["result"], list)
 
 

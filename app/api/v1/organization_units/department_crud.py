@@ -35,7 +35,8 @@ class DepartmentCRUD:
         """Fetch all departments."""
         statement = select(DepartmentDB)
         result = await self.session.exec(statement=statement)  # type: ignore
-        return DepartmentReadMany(count=len(result.all()), result=result.all())
+        all_result = result.all()
+        return DepartmentReadMany(count=len(all_result), result=all_result)
 
     async def read_by_uid(self, department_uid: UUID) -> Optional[DepartmentDB]:
         """Read department by id."""

@@ -35,7 +35,8 @@ class CurrentJobCRUD:
         """Fetch all current jobs."""
         statement = select(CurrentJobDB)
         result = await self.session.exec(statement)  # type: ignore
-        return CurrentJobReadMany(count=len(result.all()), result=result.all())
+        all_result = result.all()
+        return CurrentJobReadMany(count=len(all_result), result=all_result)
 
     async def read_by_uid(self, current_job_uid: UUID) -> Optional[CurrentJobDB]:
         """Read current job by uid."""

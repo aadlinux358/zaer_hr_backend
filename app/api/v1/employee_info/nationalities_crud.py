@@ -35,7 +35,8 @@ class NationalityCRUD:
         """Fetch all nationalities."""
         statement = select(NationalityDB)
         result = await self.session.exec(statement=statement)  # type: ignore
-        return NationalityReadMany(count=len(result.all()), result=result.all())
+        all_result = result.all()
+        return NationalityReadMany(count=len(all_result), result=all_result)
 
     async def read_by_uid(self, nationality_uid: UUID) -> Optional[NationalityDB]:
         """Read nationality by id."""

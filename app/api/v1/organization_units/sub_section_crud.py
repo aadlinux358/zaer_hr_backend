@@ -35,7 +35,8 @@ class SubSectionCRUD:
         """Fetch all sub sections."""
         statement = select(SubSectionDB)
         result = await self.session.exec(statement)  # type: ignore
-        return SubSectionReadMany(count=len(result.all()), result=result.all())
+        all_result = result.all()
+        return SubSectionReadMany(count=len(all_result), result=all_result)
 
     async def read_by_uid(self, sub_section_uid: UUID) -> Optional[SubSectionDB]:
         """Read sub_section by uid."""

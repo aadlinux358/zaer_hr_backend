@@ -35,7 +35,8 @@ class EducationalLevelCRUD:
         """Fetch all educational levels."""
         statement = select(EducationalLevelDB)
         result = await self.session.exec(statement=statement)  # type: ignore
-        return EducationalLevelReadMany(count=len(result.all()), result=result.all())
+        all_result = result.all()
+        return EducationalLevelReadMany(count=len(all_result), result= all_result)
 
     async def read_by_uid(
         self, educational_level_uid: UUID
