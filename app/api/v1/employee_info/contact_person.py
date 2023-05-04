@@ -1,4 +1,5 @@
 """Contact person api endpoints module."""
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -16,11 +17,13 @@ from app.utils.lower_case_attrs import lower_str_attrs
 
 router = APIRouter(prefix="/contact-person", tags=["contact_person"])
 
+ContactPersonCRUDDep = Annotated[ContactPersonCRUD, Depends(get_contact_person_crud)]
+
 
 @router.post("", response_model=ContactPersonRead, status_code=status.HTTP_201_CREATED)
 async def create_contact_person(
     payload: ContactPersonCreate,
-    contact_persons: ContactPersonCRUD = Depends(get_contact_person_crud),
+    contact_persons: ContactPersonCRUDDep,
 ):
     """Create contact person endpoint."""
     lower_str_attrs(payload)
@@ -36,7 +39,7 @@ async def create_contact_person(
 
 @router.get("", response_model=ContactPersonReadMany)
 async def read_many(
-    contact_persons: ContactPersonCRUD = Depends(get_contact_person_crud),
+    contact_persons: ContactPersonCRUDDep,
 ):
     """Read many contact persons."""
     contact_person_list = await contact_persons.read_many()
@@ -47,7 +50,7 @@ async def read_many(
 @router.get("/{contact_person_uid}", response_model=ContactPersonRead)
 async def read_by_uid(
     contact_person_uid: UUID,
-    contact_persons: ContactPersonCRUD = Depends(get_contact_person_crud),
+    contact_persons: ContactPersonCRUDDep,
 ):
     """Read contact person by uid."""
     contact_person = await contact_persons.read_by_uid(contact_person_uid)
@@ -62,7 +65,7 @@ async def read_by_uid(
 async def update_contact_person(
     contact_person_uid: UUID,
     payload: ContactPersonUpdate,
-    contact_persons: ContactPersonCRUD = Depends(get_contact_person_crud),
+    contact_persons: ContactPersonCRUDDep,
 ):
     """Update contact person."""
     lower_str_attrs(payload)
@@ -79,7 +82,7 @@ async def update_contact_person(
 @router.delete("/{contact_person_uid}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_contact_person(
     contact_person_uid: UUID,
-    contact_persons: ContactPersonCRUD = Depends(get_contact_person_crud),
+    contact_persons: ContactPersonCRUDDep,
 ):
     """Delete contact person."""
     deleted = await contact_persons.delete_contact_person(contact_person_uid)

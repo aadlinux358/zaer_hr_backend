@@ -36,7 +36,7 @@ class EducationalLevelCRUD:
         statement = select(EducationalLevelDB)
         result = await self.session.exec(statement=statement)  # type: ignore
         all_result = result.all()
-        return EducationalLevelReadMany(count=len(all_result), result= all_result)
+        return EducationalLevelReadMany(count=len(all_result), result=all_result)
 
     async def read_by_uid(
         self, educational_level_uid: UUID

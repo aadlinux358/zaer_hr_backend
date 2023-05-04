@@ -1,4 +1,5 @@
 """Section api endpoints module."""
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -16,11 +17,11 @@ from app.utils.lower_case_attrs import lower_str_attrs
 
 router = APIRouter(prefix="/sections", tags=["section"])
 
+SectionCRUDDep = Annotated[SectionCRUD, Depends(get_sections_crud)]
+
 
 @router.post("", response_model=SectionRead, status_code=status.HTTP_201_CREATED)
-async def create_section(
-    payload: SectionCreate, sections: SectionCRUD = Depends(get_sections_crud)
-):
+async def create_section(payload: SectionCreate, sections: SectionCRUDDep):
     """Create section."""
     lower_str_attrs(payload)
     try:
@@ -34,7 +35,7 @@ async def create_section(
 
 
 @router.get("", response_model=SectionReadMany)
-async def read_many(sections: SectionCRUD = Depends(get_sections_crud)):
+async def read_many(sections: SectionCRUDDep):
     """Read many sections."""
     section_list = await sections.read_many()
 
@@ -42,9 +43,7 @@ async def read_many(sections: SectionCRUD = Depends(get_sections_crud)):
 
 
 @router.get("/{section_uid}", response_model=SectionRead)
-async def read_by_uid(
-    section_uid: UUID, sections: SectionCRUD = Depends(get_sections_crud)
-):
+async def read_by_uid(section_uid: UUID, sections: SectionCRUDDep):
     """Read section by uid."""
     section = await sections.read_by_uid(section_uid)
     if section is None:
@@ -58,7 +57,7 @@ async def read_by_uid(
 async def update_section(
     section_uid: UUID,
     payload: SectionUpdate,
-    sections: SectionCRUD = Depends(get_sections_crud),
+    sections: SectionCRUDDep,
 ):
     """Update section."""
     lower_str_attrs(payload)
@@ -72,9 +71,7 @@ async def update_section(
 
 
 @router.delete("/{section_uid}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_section(
-    section_uid: UUID, sections: SectionCRUD = Depends(get_sections_crud)
-):
+async def delete_section(section_uid: UUID, sections: SectionCRUDDep):
     """Delete section."""
     deleted = await sections.delete_section(section_uid)
     if not deleted:

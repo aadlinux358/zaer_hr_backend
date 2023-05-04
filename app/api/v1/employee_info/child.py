@@ -1,4 +1,5 @@
 """Child api endpoints module."""
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -16,11 +17,11 @@ from app.utils.lower_case_attrs import lower_str_attrs
 
 router = APIRouter(prefix="/children", tags=["child"])
 
+ChildCRUDDep = Annotated[ChildCRUD, Depends(get_child_crud)]
+
 
 @router.post("", response_model=ChildRead, status_code=status.HTTP_201_CREATED)
-async def create_child(
-    payload: ChildCreate, children: ChildCRUD = Depends(get_child_crud)
-):
+async def create_child(payload: ChildCreate, children: ChildCRUDDep):
     """Create child endpoint."""
     lower_str_attrs(payload)
     try:
@@ -34,7 +35,7 @@ async def create_child(
 
 
 @router.get("", response_model=ChildReadMany)
-async def read_many(children: ChildCRUD = Depends(get_child_crud)):
+async def read_many(children: ChildCRUDDep):
     """Read many children."""
     child_list = await children.read_many()
 
@@ -42,7 +43,7 @@ async def read_many(children: ChildCRUD = Depends(get_child_crud)):
 
 
 @router.get("/{child_uid}", response_model=ChildRead)
-async def read_by_uid(child_uid: UUID, children: ChildCRUD = Depends(get_child_crud)):
+async def read_by_uid(child_uid: UUID, children: ChildCRUDDep):
     """Read child by uid."""
     child = await children.read_by_uid(child_uid)
     if child is None:
@@ -53,9 +54,7 @@ async def read_by_uid(child_uid: UUID, children: ChildCRUD = Depends(get_child_c
 
 
 @router.patch("/{child_uid}", response_model=ChildRead)
-async def update_child(
-    child_uid: UUID, payload: ChildUpdate, children: ChildCRUD = Depends(get_child_crud)
-):
+async def update_child(child_uid: UUID, payload: ChildUpdate, children: ChildCRUDDep):
     """Update child."""
     lower_str_attrs(payload)
     child = await children.update_child(child_uid, payload)
@@ -67,7 +66,7 @@ async def update_child(
 
 
 @router.delete("/{child_uid}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_child(child_uid: UUID, children: ChildCRUD = Depends(get_child_crud)):
+async def delete_child(child_uid: UUID, children: ChildCRUDDep):
     """Delete child."""
     deleted = await children.delete_child(child_uid)
     if not deleted:

@@ -1,4 +1,5 @@
 """Department api endpoints module."""
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -16,11 +17,13 @@ from app.utils.lower_case_attrs import lower_str_attrs
 
 router = APIRouter(prefix="/departments", tags=["department"])
 
+DepartmentCRUDDep = Annotated[DepartmentCRUD, Depends(get_departments_crud)]
+
 
 @router.post("", response_model=DepartmentRead, status_code=status.HTTP_201_CREATED)
 async def create_department(
     payload: DepartmentCreate,
-    departments: DepartmentCRUD = Depends(get_departments_crud),
+    departments: DepartmentCRUDDep,
 ):
     """Create department endpoint."""
     lower_str_attrs(payload)
@@ -35,7 +38,7 @@ async def create_department(
 
 
 @router.get("", response_model=DepartmentReadMany)
-async def read_many(departments: DepartmentCRUD = Depends(get_departments_crud)):
+async def read_many(departments: DepartmentCRUDDep):
     """Read many departments."""
     department_list = await departments.read_many()
 
@@ -43,9 +46,7 @@ async def read_many(departments: DepartmentCRUD = Depends(get_departments_crud))
 
 
 @router.get("/{department_uid}", response_model=DepartmentRead)
-async def read_by_uid(
-    department_uid: UUID, departments: DepartmentCRUD = Depends(get_departments_crud)
-):
+async def read_by_uid(department_uid: UUID, departments: DepartmentCRUDDep):
     """Read department by uid."""
     department = await departments.read_by_uid(department_uid)
     if department is None:
@@ -59,7 +60,7 @@ async def read_by_uid(
 async def updated_department(
     department_uid: UUID,
     payload: DepartmentUpdate,
-    departments: DepartmentCRUD = Depends(get_departments_crud),
+    departments: DepartmentCRUDDep,
 ):
     """Update department."""
     lower_str_attrs(payload)
@@ -72,9 +73,7 @@ async def updated_department(
 
 
 @router.delete("/{department_uid}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_department(
-    department_uid: UUID, departments: DepartmentCRUD = Depends(get_departments_crud)
-):
+async def delete_department(department_uid: UUID, departments: DepartmentCRUDDep):
     """Delete department."""
     deleted = await departments.delete_department(department_uid)
     if not deleted:

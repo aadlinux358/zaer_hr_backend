@@ -1,4 +1,5 @@
 """Section api endpoints module."""
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -16,11 +17,13 @@ from app.utils.lower_case_attrs import lower_str_attrs
 
 router = APIRouter(prefix="/sub-sections", tags=["sub_section"])
 
+SubSectionCRUDDep = Annotated[SubSectionCRUD, Depends(get_sub_sections_crud)]
+
 
 @router.post("", response_model=SubSectionRead, status_code=status.HTTP_201_CREATED)
 async def create_sub_section(
     payload: SubSectionCreate,
-    sub_sections: SubSectionCRUD = Depends(get_sub_sections_crud),
+    sub_sections: SubSectionCRUDDep,
 ):
     """Create sub section."""
     lower_str_attrs(payload)
@@ -35,7 +38,7 @@ async def create_sub_section(
 
 
 @router.get("", response_model=SubSectionReadMany)
-async def read_many(sub_sections: SubSectionCRUD = Depends(get_sub_sections_crud)):
+async def read_many(sub_sections: SubSectionCRUDDep):
     """Read many sub sections."""
     sub_section_list = await sub_sections.read_many()
 
@@ -43,9 +46,7 @@ async def read_many(sub_sections: SubSectionCRUD = Depends(get_sub_sections_crud
 
 
 @router.get("/{sub_section_uid}", response_model=SubSectionRead)
-async def read_by_uid(
-    sub_section_uid: UUID, sub_sections: SubSectionCRUD = Depends(get_sub_sections_crud)
-):
+async def read_by_uid(sub_section_uid: UUID, sub_sections: SubSectionCRUDDep):
     """Read sub section by uid."""
     sub_section = await sub_sections.read_by_uid(sub_section_uid)
     if sub_section is None:
@@ -59,7 +60,7 @@ async def read_by_uid(
 async def update_sub_section(
     sub_section_uid: UUID,
     payload: SubSectionUpdate,
-    sub_sections: SubSectionCRUD = Depends(get_sub_sections_crud),
+    sub_sections: SubSectionCRUDDep,
 ):
     """Update sub section."""
     lower_str_attrs(payload)
@@ -72,9 +73,7 @@ async def update_sub_section(
 
 
 @router.delete("/{sub_section_uid}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_sub_section(
-    sub_section_uid: UUID, sub_sections: SubSectionCRUD = Depends(get_sub_sections_crud)
-):
+async def delete_sub_section(sub_section_uid: UUID, sub_sections: SubSectionCRUDDep):
     """Delete sub section."""
     deleted = await sub_sections.delete_sub_section(sub_section_uid)
     if not deleted:

@@ -1,4 +1,5 @@
 """Employee api endpoints module."""
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -16,11 +17,11 @@ from app.utils.lower_case_attrs import lower_str_attrs
 
 router = APIRouter(prefix="/employees", tags=["employee"])
 
+EmployeeCRUDDep = Annotated[EmployeeCRUD, Depends(get_employee_crud)]
+
 
 @router.post("", response_model=EmployeeRead, status_code=status.HTTP_201_CREATED)
-async def create_employee(
-    payload: EmployeeCreate, employees: EmployeeCRUD = Depends(get_employee_crud)
-):
+async def create_employee(payload: EmployeeCreate, employees: EmployeeCRUDDep):
     """Create Employee."""
     lower_str_attrs(payload)
     try:
@@ -34,7 +35,7 @@ async def create_employee(
 
 
 @router.get("", response_model=EmployeeReadMany)
-async def read_many(employees: EmployeeCRUD = Depends(get_employee_crud)):
+async def read_many(employees: EmployeeCRUDDep):
     """Read many employees."""
     employee_list = await employees.read_many()
 
@@ -42,9 +43,7 @@ async def read_many(employees: EmployeeCRUD = Depends(get_employee_crud)):
 
 
 @router.get("/{employee_uid}", response_model=EmployeeRead)
-async def read_by_uid(
-    employee_uid: UUID, employees: EmployeeCRUD = Depends(get_employee_crud)
-):
+async def read_by_uid(employee_uid: UUID, employees: EmployeeCRUDDep):
     """Read employee by uid."""
     employee = await employees.read_by_uid(employee_uid)
     if employee is None:
@@ -58,7 +57,7 @@ async def read_by_uid(
 async def update_employee(
     employee_uid: UUID,
     payload: EmployeeUpdate,
-    employees: EmployeeCRUD = Depends(get_employee_crud),
+    employees: EmployeeCRUDDep,
 ):
     """Update employee."""
     lower_str_attrs(payload)

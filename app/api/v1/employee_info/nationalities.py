@@ -1,4 +1,5 @@
 """Nationality api endpoints module."""
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -16,11 +17,13 @@ from app.utils.lower_case_attrs import lower_str_attrs
 
 router = APIRouter(prefix="/nationalities", tags=["nationality"])
 
+NationalityCRUDDep = Annotated[NationalityCRUD, Depends(get_nationality_crud)]
+
 
 @router.post("", response_model=NationalityRead, status_code=status.HTTP_201_CREATED)
 async def create_nationality(
     payload: NationalityCreate,
-    nationalities: NationalityCRUD = Depends(get_nationality_crud),
+    nationalities: NationalityCRUDDep,
 ):
     """Create nationality endpoint."""
     lower_str_attrs(payload)
@@ -36,7 +39,7 @@ async def create_nationality(
 
 
 @router.get("", response_model=NationalityReadMany)
-async def read_many(nationalities: NationalityCRUD = Depends(get_nationality_crud)):
+async def read_many(nationalities: NationalityCRUDDep):
     """Read many nationalities."""
     nationality_list = await nationalities.read_many()
 
@@ -46,7 +49,7 @@ async def read_many(nationalities: NationalityCRUD = Depends(get_nationality_cru
 @router.get("/{nationality_uid}", response_model=NationalityRead)
 async def read_by_uid(
     nationality_uid: UUID,
-    nationalities: NationalityCRUD = Depends(get_nationality_crud),
+    nationalities: NationalityCRUDDep,
 ):
     """Read nationality by uid."""
     nationality = await nationalities.read_by_uid(nationality_uid)
@@ -61,7 +64,7 @@ async def read_by_uid(
 async def updated_nationality(
     nationality_uid: UUID,
     payload: NationalityUpdate,
-    nationalities: NationalityCRUD = Depends(get_nationality_crud),
+    nationalities: NationalityCRUDDep,
 ):
     """Update nationality."""
     lower_str_attrs(payload)
@@ -76,7 +79,7 @@ async def updated_nationality(
 @router.delete("/{nationality_uid}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_nationality(
     nationality_uid: UUID,
-    nationalities: NationalityCRUD = Depends(get_nationality_crud),
+    nationalities: NationalityCRUDDep,
 ):
     """Delete nationality."""
     deleted = await nationalities.delete_nationality(nationality_uid)

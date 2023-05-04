@@ -1,4 +1,5 @@
 """Current job api endpoints module."""
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -16,11 +17,13 @@ from app.utils.lower_case_attrs import lower_str_attrs
 
 router = APIRouter(prefix="/current-jobs", tags=["current_job"])
 
+CurrentJobCRUDDep = Annotated[CurrentJobCRUD, Depends(get_current_job_crud)]
+
 
 @router.post("", response_model=CurrentJobRead, status_code=status.HTTP_201_CREATED)
 async def create_current_job(
     payload: CurrentJobCreate,
-    current_jobs: CurrentJobCRUD = Depends(get_current_job_crud),
+    current_jobs: CurrentJobCRUDDep,
 ):
     """Create current job endpoint."""
     lower_str_attrs(payload)
@@ -35,7 +38,7 @@ async def create_current_job(
 
 
 @router.get("", response_model=CurrentJobReadMany)
-async def read_many(current_jobs: CurrentJobCRUD = Depends(get_current_job_crud)):
+async def read_many(current_jobs: CurrentJobCRUDDep):
     """Read many current jobs."""
     current_job_list = await current_jobs.read_many()
 
@@ -43,9 +46,7 @@ async def read_many(current_jobs: CurrentJobCRUD = Depends(get_current_job_crud)
 
 
 @router.get("/{current_job_uid}", response_model=CurrentJobRead)
-async def read_by_uid(
-    current_job_uid: UUID, current_jobs: CurrentJobCRUD = Depends(get_current_job_crud)
-):
+async def read_by_uid(current_job_uid: UUID, current_jobs: CurrentJobCRUDDep):
     """Read current job by id."""
     current_job = await current_jobs.read_by_uid(current_job_uid)
     if current_job is None:
@@ -59,7 +60,7 @@ async def read_by_uid(
 async def update_current_job(
     current_job_uid: UUID,
     payload: CurrentJobUpdate,
-    current_jobs: CurrentJobCRUD = Depends(get_current_job_crud),
+    current_jobs: CurrentJobCRUDDep,
 ):
     """Update current job."""
     lower_str_attrs(payload)
@@ -72,9 +73,7 @@ async def update_current_job(
 
 
 @router.delete("/{current_job_uid}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_current_job(
-    current_job_uid: UUID, current_jobs: CurrentJobCRUD = Depends(get_current_job_crud)
-):
+async def delete_current_job(current_job_uid: UUID, current_jobs: CurrentJobCRUDDep):
     """Delete current job."""
     deleted = await current_jobs.delete_current_job(current_job_uid)
     if not deleted:

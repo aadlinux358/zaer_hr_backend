@@ -1,4 +1,5 @@
 """Address api endpoints module."""
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -16,11 +17,11 @@ from app.utils.lower_case_attrs import lower_str_attrs
 
 router = APIRouter(prefix="/addresses", tags=["address"])
 
+AddressCRUDDep = Annotated[AddressCRUD, Depends(get_address_crud)]
+
 
 @router.post("", response_model=AddressRead, status_code=status.HTTP_201_CREATED)
-async def create_address(
-    payload: AddressCreate, addresses: AddressCRUD = Depends(get_address_crud)
-):
+async def create_address(payload: AddressCreate, addresses: AddressCRUDDep):
     """Create address endpoint."""
     lower_str_attrs(payload)
     try:
@@ -34,7 +35,7 @@ async def create_address(
 
 
 @router.get("", response_model=AddressReadMany)
-async def read_many(addresses: AddressCRUD = Depends(get_address_crud)):
+async def read_many(addresses: AddressCRUDDep):
     """Read many addresses."""
     address_list = await addresses.read_many()
 
@@ -42,9 +43,7 @@ async def read_many(addresses: AddressCRUD = Depends(get_address_crud)):
 
 
 @router.get("/{address_uid}", response_model=AddressRead)
-async def read_by_uid(
-    address_uid: UUID, addresses: AddressCRUD = Depends(get_address_crud)
-):
+async def read_by_uid(address_uid: UUID, addresses: AddressCRUDDep):
     """Read address by uid."""
     address = await addresses.read_by_uid(address_uid)
     if address is None:
@@ -58,7 +57,7 @@ async def read_by_uid(
 async def update_address(
     address_uid: UUID,
     payload: AddressUpdate,
-    addresses: AddressCRUD = Depends(get_address_crud),
+    addresses: AddressCRUDDep,
 ):
     """Update address."""
     lower_str_attrs(payload)
@@ -71,9 +70,7 @@ async def update_address(
 
 
 @router.delete("/{address_uid}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_address(
-    address_uid: UUID, addresses: AddressCRUD = Depends(get_address_crud)
-):
+async def delete_address(address_uid: UUID, addresses: AddressCRUDDep):
     """Delete address."""
     deleted = await addresses.delete_address(address_uid)
     if not deleted:

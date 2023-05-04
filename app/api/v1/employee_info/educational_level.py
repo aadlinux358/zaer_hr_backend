@@ -1,4 +1,5 @@
 """Educational level api endpoints module."""
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -16,13 +17,17 @@ from app.utils.lower_case_attrs import lower_str_attrs
 
 router = APIRouter(prefix="/educational-levels", tags=["educational_level"])
 
+EducationalLevelCRUDDep = Annotated[
+    EducationalLevelCRUD, Depends(get_educational_level_crud)
+]
+
 
 @router.post(
     "", response_model=EducationalLevelRead, status_code=status.HTTP_201_CREATED
 )
 async def create_educational_level(
     payload: EducationalLevelCreate,
-    educational_levels: EducationalLevelCRUD = Depends(get_educational_level_crud),
+    educational_levels: EducationalLevelCRUDDep,
 ):
     """Create educational level endpoint."""
     lower_str_attrs(payload)
@@ -39,7 +44,7 @@ async def create_educational_level(
 
 @router.get("", response_model=EducationalLevelReadMany)
 async def read_many(
-    educational_levels: EducationalLevelCRUD = Depends(get_educational_level_crud),
+    educational_levels: EducationalLevelCRUDDep,
 ):
     """Read many educational levels."""
     educational_level_list = await educational_levels.read_many()
@@ -50,7 +55,7 @@ async def read_many(
 @router.get("/{educational_level_uid}", response_model=EducationalLevelRead)
 async def read_by_uid(
     educational_level_uid: UUID,
-    educational_levels: EducationalLevelCRUD = Depends(get_educational_level_crud),
+    educational_levels: EducationalLevelCRUDDep,
 ):
     """Read educational level by uid."""
     educational_level = await educational_levels.read_by_uid(educational_level_uid)
@@ -65,7 +70,7 @@ async def read_by_uid(
 async def updated_educational_level(
     educational_level_uid: UUID,
     payload: EducationalLevelUpdate,
-    educational_levels: EducationalLevelCRUD = Depends(get_educational_level_crud),
+    educational_levels: EducationalLevelCRUDDep,
 ):
     """Update educational level."""
     lower_str_attrs(payload)
@@ -82,7 +87,7 @@ async def updated_educational_level(
 @router.delete("/{educational_level_uid}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_educational_level(
     educational_level_uid: UUID,
-    educational_levels: EducationalLevelCRUD = Depends(get_educational_level_crud),
+    educational_levels: EducationalLevelCRUDDep,
 ):
     """Delete educational level."""
     deleted = await educational_levels.delete_educational_level(educational_level_uid)
