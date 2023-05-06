@@ -3,7 +3,8 @@ import asyncio
 from typing import AsyncGenerator, Final, Generator
 
 import pytest_asyncio
-from httpx import AsyncClient
+from fastapi_jwt_auth import AuthJWT  # type: ignore
+from httpx import AsyncClient, Headers
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -16,19 +17,14 @@ from app.main import app
 
 TEST_URL: Final = f"http://{settings.api_v1_prefix}"
 
+USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
+
 
 def event_loop(request) -> Generator:  # noqa: indirect usage
     """Get the event loop."""
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
-
-
-@pytest_asyncio.fixture
-async def client() -> AsyncGenerator[AsyncClient, None]:
-    """Fixture that provide async session."""
-    async with AsyncClient(app=app, base_url=TEST_URL) as client:
-        yield client
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
@@ -46,3 +42,18 @@ async def session() -> AsyncGenerator[AsyncSession, None]:
         await conn.run_sync(SQLModel.metadata.drop_all)
 
     await async_engine.dispose()
+
+
+@pytest_asyncio.fixture
+async def client() -> AsyncGenerator[AsyncClient, None]:
+    """Fixture that provide async client."""
+    async with AsyncClient(app=app, base_url=TEST_URL) as client:
+        user_claims = {
+            "is_superuser": True,
+            "is_staff": True,
+        }
+        access_token = AuthJWT().create_access_token(
+            subject=USER_ID, user_claims=user_claims
+        )
+        client.headers = Headers({"Authorization": f"Bearer {access_token}"})
+        yield client

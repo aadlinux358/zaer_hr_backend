@@ -3,31 +3,69 @@ import os
 import sys
 from typing import Union
 
-from pydantic import BaseSettings, PostgresDsn
 import requests
-from requests.exceptions import ConnectionError
 from dotenv import load_dotenv
+from pydantic import BaseSettings, PostgresDsn
+from requests.exceptions import ConnectionError
 
 load_dotenv()
 
-def get_public_key() -> str:
-    auth_api = os.environ.get('auth_api')
+
+def get_pytest_keys() -> dict:
+    """Generate keys for testing."""
+    from cryptography.hazmat.primitives import serialization
+    from cryptography.hazmat.primitives.asymmetric import rsa
+
+    key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    private_key_bytes = key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.NoEncryption(),
+    )
+    public_key = key.public_key()
+    public_key_bytes = public_key.public_bytes(
+        encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.PKCS1
+    )
+    public_key_str = public_key_bytes.decode()
+    private_key_str = private_key_bytes.decode()
+    return dict(private_key=private_key_str, public_key=public_key_str)
+
+
+_pytest_private_key = None
+_pytest_public_key = None
+
+if "pytest" in sys.modules:
+    keys = get_pytest_keys()
+    _pytest_private_key = keys.get("private_key")
+    _pytest_public_key = keys.get("public_key")
+
+
+def get_public_key() -> str | None:
+    """Get public key."""
+    # TODO clean up this check for pytest
+    if "pytest" in sys.modules:
+        return _pytest_public_key
+
+    auth_api = os.environ.get("auth_api")
     if auth_api is None:
-        print('auth_api environment variable not set.')
-        sys.exit(1)
+        print("auth_api environment variable not set.")
+        return None
     try:
         response = requests.get(f"{auth_api}/api/v1/auth/public-key")
-    except ConnectionError as e:
-        print('Can not obtain public key. Check Auth service.')
-        sys.exit(1)
+    except ConnectionError:
+        print("Can not obtain public key. Check Auth service.")
+        return None
 
-    return response.json()['public_key']
+    return response.json()["public_key"]
+
 
 class Settings(BaseSettings):
     """Settings configuration class."""
+
     # fastapi_jwt_auth
-    authjwt_public_key: str = get_public_key()
-    authjwt_algorithm: str = 'RS256'
+    authjwt_private_key: str | None = _pytest_private_key
+    authjwt_public_key: str | None = get_public_key()
+    authjwt_algorithm: str = "RS256"
 
     # Base
     api_v1_prefix: str
