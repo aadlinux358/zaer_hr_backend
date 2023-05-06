@@ -46,6 +46,8 @@ class SectionRead(SectionCreate):
     """Section model for reading section data."""
 
     uid: UUID
+    created_by: UUID
+    modified_by: UUID
     date_created: datetime
     date_modified: datetime
 

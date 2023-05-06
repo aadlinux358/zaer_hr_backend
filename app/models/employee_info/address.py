@@ -41,6 +41,8 @@ class AddressRead(AddressCreate):
     """Address read one model."""
 
     uid: UUID
+    created_by: UUID
+    modified_by: UUID
     date_created: datetime
     date_modified: datetime
 
