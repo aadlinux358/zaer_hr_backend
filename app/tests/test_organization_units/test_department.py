@@ -17,7 +17,7 @@ USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
 async def test_can_create_department(client: AsyncClient):
     response = await client.post(
         f"/{ENDPOINT}",
-        json={"name": "department 1", "created_by": USER_ID, "modified_by": USER_ID},
+        json={"name": "department 1"},
     )
 
     assert response.status_code == status.HTTP_201_CREATED, response.json()
@@ -30,7 +30,7 @@ async def test_can_create_department(client: AsyncClient):
 async def test_department_names_are_lower_cased(client: AsyncClient):
     response = await client.post(
         f"/{ENDPOINT}",
-        json={"name": "CamiCeria", "created_by": USER_ID, "modified_by": USER_ID},
+        json={"name": "CamiCeria"},
     )
 
     assert response.status_code == status.HTTP_201_CREATED, response.json()
@@ -49,7 +49,7 @@ async def test_can_not_create_duplicate_department_name(
 
     response = await client.post(
         f"/{ENDPOINT}",
-        json={"name": "HR", "created_by": USER_ID, "modified_by": USER_ID},
+        json={"name": "HR"},
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.json()
     assert response.json()["detail"] == "duplicate department name."
@@ -117,7 +117,7 @@ async def test_can_update_department(client: AsyncClient, session: AsyncSession)
 
     response = await client.patch(
         f"/{ENDPOINT}/{department.uid}",
-        json={"name": "finance", "modified_by": USER_ID},
+        json={"name": "finance"},
     )
 
     assert response.status_code == status.HTTP_200_OK, response.json()
@@ -125,6 +125,7 @@ async def test_can_update_department(client: AsyncClient, session: AsyncSession)
     assert response.json()["name"] == "finance"
     assert response.json()["date_created"] == department.date_created.isoformat()
     assert response.json()["date_modified"] != department.date_modified.isoformat()
+    assert response.json()["modified_by"] == USER_ID
 
 
 @pytest.mark.asyncio
