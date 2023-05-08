@@ -40,7 +40,7 @@ async def test_create_employee(client: AsyncClient, session: AsyncSession):
     payload.update(
         designation_uid=str(related["designation"].uid),
         nationality_uid=str(related["nationality"].uid),
-        sub_section_uid=str(related["sub_section"].uid),
+        unit_uid=str(related["unit"].uid),
         educational_level_uid=str(related["educational_level"].uid),
     )
     response = await client.post(f"/{ENDPOINT}", json=payload)
@@ -61,7 +61,7 @@ async def test_duplicate_violation(client: AsyncClient, session: AsyncSession):
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        sub_section_uid=related["sub_section"].uid,
+        unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
     )
     session.add(employee)
@@ -71,7 +71,7 @@ async def test_duplicate_violation(client: AsyncClient, session: AsyncSession):
     payload.update(
         designation_uid=str(related["designation"].uid),
         nationality_uid=str(related["nationality"].uid),
-        sub_section_uid=str(related["sub_section"].uid),
+        unit_uid=str(related["unit"].uid),
         educational_level_uid=str(related["educational_level"].uid),
     )
     response = await client.post(f"/{ENDPOINT}", json=payload)
@@ -97,21 +97,21 @@ async def test_get_employees_list(client: AsyncClient, session: AsyncSession):
             **emp_one,
             designation_uid=related["designation"].uid,
             nationality_uid=related["nationality"].uid,
-            sub_section_uid=related["sub_section"].uid,
+            unit_uid=related["unit"].uid,
             educational_level_uid=related["educational_level"].uid,
         ),
         EmployeeDB(
             **emp_two,
             designation_uid=related["designation"].uid,
             nationality_uid=related["nationality"].uid,
-            sub_section_uid=related["sub_section"].uid,
+            unit_uid=related["unit"].uid,
             educational_level_uid=related["educational_level"].uid,
         ),
         EmployeeDB(
             **emp_three,
             designation_uid=related["designation"].uid,
             nationality_uid=related["nationality"].uid,
-            sub_section_uid=related["sub_section"].uid,
+            unit_uid=related["unit"].uid,
             educational_level_uid=related["educational_level"].uid,
         ),
     ]
@@ -135,7 +135,7 @@ async def test_get_employee_by_uid(client: AsyncClient, session: AsyncSession):
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        sub_section_uid=related["sub_section"].uid,
+        unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
     )
     session.add(employee)
@@ -163,7 +163,7 @@ async def test_can_update_employee(client: AsyncClient, session: AsyncSession):
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        sub_section_uid=related["sub_section"].uid,
+        unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
     )
     session.add(employee)

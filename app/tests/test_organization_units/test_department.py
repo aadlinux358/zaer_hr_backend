@@ -7,85 +7,138 @@ from fastapi import status
 from httpx import AsyncClient
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.models import DepartmentDB
+from app.models.organization_units.department import DepartmentDB
+from app.models.organization_units.division import DivisionDB
 
 ENDPOINT: Final = "departments"
 USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
 
 
 @pytest.mark.asyncio
-async def test_can_create_department(client: AsyncClient):
+async def test_create_department(client: AsyncClient, session: AsyncSession):
+    division = DivisionDB(
+        name="operations", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+    )
+    session.add(division)
+    await session.commit()
+    await session.refresh(division)
+
     response = await client.post(
         f"/{ENDPOINT}",
-        json={"name": "department 1"},
+        json={
+            "name": "shirt division",
+            "division_uid": str(division.uid),
+        },
     )
 
     assert response.status_code == status.HTTP_201_CREATED, response.json()
-    assert response.json()["name"] == "department 1"
-    assert response.json()["date_created"]
-    assert response.json()["date_modified"]
+    assert response.json()["name"] == "shirt division"
 
 
 @pytest.mark.asyncio
-async def test_department_names_are_lower_cased(client: AsyncClient):
+async def test_department_names_are_lower_cased(
+    client: AsyncClient, session: AsyncSession
+):
+    division = DivisionDB(
+        name="operations", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+    )
+    session.add(division)
+    await session.commit()
+    await session.refresh(division)
+
     response = await client.post(
         f"/{ENDPOINT}",
-        json={"name": "CamiCeria"},
+        json={
+            "name": "UPPERCASE",
+            "division_uid": str(division.uid),
+        },
     )
 
     assert response.status_code == status.HTTP_201_CREATED, response.json()
-    assert response.json()["name"] == "camiceria"
+    assert response.json()["name"] == "uppercase"
 
 
 @pytest.mark.asyncio
 async def test_can_not_create_duplicate_department_name(
     client: AsyncClient, session: AsyncSession
 ):
+    division = DivisionDB(
+        name="operations", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+    )
+    session.add(division)
+    await session.commit()
+    await session.refresh(division)
     department = DepartmentDB(
-        name="hr", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+        name="shirt division",
+        division_uid=division.uid,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
     )
     session.add(department)
     await session.commit()
+    await session.refresh(department)
 
     response = await client.post(
         f"/{ENDPOINT}",
-        json={"name": "HR"},
+        json={
+            "name": "shirt division",
+            "division_uid": str(division.uid),
+        },
     )
+
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.json()
     assert response.json()["detail"] == "duplicate department name."
 
 
 @pytest.mark.asyncio
-async def test_can_get_departments_list(client: AsyncClient, session: AsyncSession):
+async def test_can_get_department_list(client: AsyncClient, session: AsyncSession):
+    division = DivisionDB(
+        name="operations", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+    )
+    session.add(division)
+    await session.commit()
+    await session.refresh(division)
     departments = [
         DepartmentDB(
-            name="hr", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
-        ),
-        DepartmentDB(
-            name="camiceria",
+            name="shirt division",
+            division_uid=division.uid,
             created_by=uuid.UUID(USER_ID),
             modified_by=uuid.UUID(USER_ID),
         ),
         DepartmentDB(
-            name="store", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+            name="garment division",
+            division_uid=division.uid,
+            created_by=uuid.UUID(USER_ID),
+            modified_by=uuid.UUID(USER_ID),
         ),
     ]
-    for dep in departments:
-        session.add(dep)
+
+    for department in departments:
+        session.add(department)
+
     await session.commit()
 
-    response = await client.get(f"/{ENDPOINT}")
+    response = await client.get(f"{ENDPOINT}")
 
     assert response.status_code == status.HTTP_200_OK, response.json()
-    assert response.json()["count"] == 3
-    assert len(response.json()["result"]) == 3
+    assert response.json()["count"] == 2
+    assert len(response.json()["result"]) == 2
     assert isinstance(response.json()["result"], list)
 
 
 @pytest.mark.asyncio
-async def test_can_get_department_by_id(client: AsyncClient, session: AsyncSession):
+async def test_can_get_department_by_uid(client: AsyncClient, session: AsyncSession):
+    division = DivisionDB(
+        name="operations", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+    )
+    session.add(division)
+    await session.commit()
+    await session.refresh(division)
     department = DepartmentDB(
-        name="hr", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+        name="shirt division",
+        division_uid=division.uid,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
     )
     session.add(department)
     await session.commit()
@@ -95,11 +148,11 @@ async def test_can_get_department_by_id(client: AsyncClient, session: AsyncSessi
 
     assert response.status_code == status.HTTP_200_OK, response.json()
     assert response.json()["uid"] == str(department.uid)
-    assert response.json()["name"] == "hr"
+    assert response.json()["name"] == "shirt division"
 
 
 @pytest.mark.asyncio
-async def test_department_not_found(client: AsyncClient):
+async def test_department_not_fount(client: AsyncClient):
     response = await client.get(f"/{ENDPOINT}/{uuid.uuid4()}")
 
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.json()
@@ -108,30 +161,46 @@ async def test_department_not_found(client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_can_update_department(client: AsyncClient, session: AsyncSession):
+    division = DivisionDB(
+        name="operations", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+    )
+    session.add(division)
+    await session.commit()
+    await session.refresh(division)
     department = DepartmentDB(
-        name="sales", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+        name="shirt division",
+        division_uid=division.uid,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
     )
     session.add(department)
     await session.commit()
     await session.refresh(department)
 
     response = await client.patch(
-        f"/{ENDPOINT}/{department.uid}",
-        json={"name": "finance"},
+        f"{ENDPOINT}/{department.uid}",
+        json={"name": "garment division"},
     )
 
     assert response.status_code == status.HTTP_200_OK, response.json()
     assert response.json()["uid"] == str(department.uid)
-    assert response.json()["name"] == "finance"
-    assert response.json()["date_created"] == department.date_created.isoformat()
-    assert response.json()["date_modified"] != department.date_modified.isoformat()
+    assert response.json()["name"] == "garment division"
     assert response.json()["modified_by"] == USER_ID
 
 
 @pytest.mark.asyncio
 async def test_delete_department(client: AsyncClient, session: AsyncSession):
+    division = DivisionDB(
+        name="operations", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+    )
+    session.add(division)
+    await session.commit()
+    await session.refresh(division)
     department = DepartmentDB(
-        name="hr", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+        name="shirt division",
+        division_uid=division.uid,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
     )
     session.add(department)
     await session.commit()

@@ -60,7 +60,7 @@ class EmployeeBase(SQLModel):
     current_hire_date: date = Field(nullable=False)
     current_termination_date: Optional[date] = Field(default=None, nullable=True)
     designation_uid: UUID = Field(nullable=False, foreign_key="designation.uid")
-    sub_section_uid: UUID = Field(nullable=False, foreign_key="sub_section.uid")
+    unit_uid: UUID
     is_active: bool = Field(default=True, nullable=False)
     nationality_uid: UUID = Field(nullable=False, foreign_key="nationality.uid")
     birth_place: str = Field(nullable=False, max_length=100)
@@ -116,7 +116,7 @@ class EmployeeUpdate(SQLModel):
     current_hire_date: Optional[date]
     current_termination_date: Optional[date]
     designation_uid: Optional[UUID]
-    sub_section_uid: Optional[UUID]
+    unit_uid: Optional[UUID]
     is_active: Optional[bool]
     nationality_uid: Optional[UUID]
     birth_place: Optional[str]
@@ -135,6 +135,7 @@ class EmployeeDB(Base, EmployeeBase, table=True):
     """Employee model for database table."""
 
     __tablename__: ClassVar[Union[str, Callable[..., str]]] = "employee"
+    unit_uid: UUID = Field(nullable=False, foreign_key="unit.uid")
 
 
 class EmployeeRead(EmployeeCreate):

@@ -15,6 +15,7 @@ from app.models.organization_units.department import (
     DepartmentRead,
     DepartmentReadMany,
     DepartmentUpdate,
+    DepartmentUpdateBase,
 )
 from app.utils.lower_case_attrs import lower_str_attrs
 
@@ -28,12 +29,11 @@ AuthJWTDep = Annotated[AuthJWT, Depends()]
 async def create_department(
     payload: DepartmentBase, departments: DepartmentCRUDDep, Authorize: AuthJWTDep
 ):
-    """Create department endpoint."""
+    """Create department."""
     Authorize.jwt_required()
     user_claims = Authorize.get_raw_jwt()
     await superuser_or_error(user_claims)
     subject = UUID(Authorize.get_jwt_subject())  # type: ignore
-
     lower_str_attrs(payload)
     create_payload = DepartmentCreate(
         **payload.dict(), created_by=subject, modified_by=subject
@@ -72,9 +72,9 @@ async def read_by_uid(
 
 
 @router.patch("/{department_uid}", response_model=DepartmentRead)
-async def updated_department(
+async def update_department(
     department_uid: UUID,
-    payload: DepartmentBase,
+    payload: DepartmentUpdateBase,
     departments: DepartmentCRUDDep,
     Authorize: AuthJWTDep,
 ):
@@ -83,14 +83,16 @@ async def updated_department(
     user_claims = Authorize.get_raw_jwt()
     await superuser_or_error(user_claims)
     subject = UUID(Authorize.get_jwt_subject())  # type: ignore
-
     lower_str_attrs(payload)
-    update_payload = DepartmentUpdate(**payload.dict(), modified_by=subject)
+    update_payload = DepartmentUpdate(
+        **payload.dict(exclude_unset=True), modified_by=subject
+    )
     department = await departments.update_department(department_uid, update_payload)
     if department is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="department not found."
         )
+
     return department
 
 

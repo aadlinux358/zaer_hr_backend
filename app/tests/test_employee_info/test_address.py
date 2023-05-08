@@ -41,7 +41,7 @@ async def test_create_address(client: AsyncClient, session: AsyncSession):
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        sub_section_uid=related["sub_section"].uid,
+        unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
     )
     session.add(employee)
@@ -73,7 +73,7 @@ async def test_can_get_address_by_uid(client: AsyncClient, session: AsyncSession
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        sub_section_uid=related["sub_section"].uid,
+        unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
     )
     session.add(employee)
@@ -115,7 +115,7 @@ async def test_update_address(client: AsyncClient, session: AsyncSession):
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        sub_section_uid=related["sub_section"].uid,
+        unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
     )
     session.add(employee)
@@ -152,7 +152,7 @@ async def test_delete_address(client: AsyncClient, session: AsyncSession):
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        sub_section_uid=related["sub_section"].uid,
+        unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
     )
     session.add(employee)

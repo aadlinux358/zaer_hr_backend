@@ -11,14 +11,16 @@ from app.api.v1.employee_info.employee import router as employee_router
 from app.api.v1.employee_info.nationalities import router as nationality_router
 from app.api.v1.organization_units.department import router as department_router
 from app.api.v1.organization_units.designation import router as designation_router
+from app.api.v1.organization_units.division import router as division_router
 from app.api.v1.organization_units.section import router as section_router
-from app.api.v1.organization_units.sub_section import router as sub_section_router
+from app.api.v1.organization_units.unit import router as unit_router
 
 api_router = APIRouter()
 
+api_router.include_router(division_router)
 api_router.include_router(department_router)
 api_router.include_router(section_router)
-api_router.include_router(sub_section_router)
+api_router.include_router(unit_router)
 api_router.include_router(designation_router)
 api_router.include_router(employee_router)
 api_router.include_router(child_router)

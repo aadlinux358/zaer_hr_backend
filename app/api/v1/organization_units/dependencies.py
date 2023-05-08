@@ -4,9 +4,17 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.api.v1.organization_units.department_crud import DepartmentCRUD
 from app.api.v1.organization_units.designation_crud import DesignationCRUD
+from app.api.v1.organization_units.division_crud import DivisionCRUD
 from app.api.v1.organization_units.section_crud import SectionCRUD
-from app.api.v1.organization_units.sub_section_crud import SubSectionCRUD
+from app.api.v1.organization_units.unit_crud import UnitCRUD
 from app.core.db import get_async_session
+
+
+async def get_divisions_crud(
+    session: AsyncSession = Depends(get_async_session),
+) -> DivisionCRUD:
+    """Dependency function that initialize division crud operations class."""
+    return DivisionCRUD(session=session)
 
 
 async def get_departments_crud(
@@ -23,11 +31,11 @@ async def get_sections_crud(
     return SectionCRUD(session=session)
 
 
-async def get_sub_sections_crud(
+async def get_units_crud(
     session: AsyncSession = Depends(get_async_session),
-) -> SubSectionCRUD:
-    """Dependency function that initialize sub section crud operations class."""
-    return SubSectionCRUD(session=session)
+) -> UnitCRUD:
+    """Dependency function that initialize unit crud operations class."""
+    return UnitCRUD(session=session)
 
 
 async def get_designation_crud(

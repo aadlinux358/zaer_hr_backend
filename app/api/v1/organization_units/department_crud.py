@@ -14,10 +14,10 @@ from app.models.organization_units.department import (
 
 
 class DepartmentCRUD:
-    """Class defining all database related operations."""
+    """Department's database operations."""
 
     def __init__(self, session: AsyncSession):
-        """Database operations class initializer."""
+        """Database operations initializer."""
         self.session = session
 
     async def create(self, payload: DepartmentCreate) -> DepartmentDB:
@@ -34,7 +34,7 @@ class DepartmentCRUD:
     async def read_many(self) -> DepartmentReadMany:
         """Fetch all departments."""
         statement = select(DepartmentDB)
-        result = await self.session.exec(statement=statement)  # type: ignore
+        result = await self.session.exec(statement)  # type: ignore
         all_result = result.all()
         return DepartmentReadMany(count=len(all_result), result=all_result)
 

@@ -39,7 +39,7 @@ class SectionCRUD:
         return SectionReadMany(count=len(all_result), result=all_result)
 
     async def read_by_uid(self, section_uid: UUID) -> Optional[SectionDB]:
-        """Read section by id."""
+        """Read section by uid."""
         statement = select(SectionDB).where(SectionDB.uid == section_uid)
         result = await self.session.exec(statement)  # type: ignore
         section = result.one_or_none()

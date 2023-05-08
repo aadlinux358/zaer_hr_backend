@@ -7,13 +7,15 @@ from app.models.employee_info.employee import EmployeeDB
 from app.models.employee_info.nationalities import NationalityDB
 from app.models.organization_units.department import DepartmentDB
 from app.models.organization_units.designation import DesignationDB
+from app.models.organization_units.division import DivisionDB
 from app.models.organization_units.section import SectionDB
-from app.models.organization_units.sub_section import SubSectionDB
+from app.models.organization_units.unit import UnitDB
 
 __all__ = (
+    "DivisionDB",
     "DepartmentDB",
     "SectionDB",
-    "SubSectionDB",
+    "UnitDB",
     "DesignationDB",
     "NationalityDB",
     "EducationalLevelDB",
