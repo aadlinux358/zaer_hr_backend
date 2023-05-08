@@ -8,6 +8,7 @@ from httpx import AsyncClient
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models import DepartmentDB, DivisionDB, SectionDB, UnitDB
+from app.tests.test_organization_units.utils import create_test_model
 
 ENDPOINT: Final = "units"
 USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
@@ -15,30 +16,7 @@ USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
 
 @pytest.mark.asyncio
 async def test_create_unit(client: AsyncClient, session: AsyncSession):
-    division = DivisionDB(
-        name="operations", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
-    )
-    session.add(division)
-    await session.commit()
-    await session.refresh(division)
-    department = DepartmentDB(
-        name="shirt division",
-        division_uid=division.uid,
-        created_by=uuid.UUID(USER_ID),
-        modified_by=uuid.UUID(USER_ID),
-    )
-    session.add(department)
-    await session.commit()
-    await session.refresh(department)
-    section = SectionDB(
-        name="section one",
-        department_uid=department.uid,
-        created_by=uuid.UUID(USER_ID),
-        modified_by=uuid.UUID(USER_ID),
-    )
-    session.add(section)
-    await session.commit()
-    await session.refresh(section)
+    section = await create_test_model('section', session)
 
     response = await client.post(
         f"{ENDPOINT}",
@@ -59,30 +37,7 @@ async def test_create_unit(client: AsyncClient, session: AsyncSession):
 async def test_can_not_create_duplicate_unit_name(
     client: AsyncClient, session: AsyncSession
 ):
-    division = DivisionDB(
-        name="operations", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
-    )
-    session.add(division)
-    await session.commit()
-    await session.refresh(division)
-    department = DepartmentDB(
-        name="shirt division",
-        division_uid=division.uid,
-        created_by=uuid.UUID(USER_ID),
-        modified_by=uuid.UUID(USER_ID),
-    )
-    session.add(department)
-    await session.commit()
-    await session.refresh(department)
-    section = SectionDB(
-        name="cutting",
-        department_uid=department.uid,
-        created_by=uuid.UUID(USER_ID),
-        modified_by=uuid.UUID(USER_ID),
-    )
-    session.add(section)
-    await session.commit()
-    await session.refresh(section)
+    section = await create_test_model('section', session)
 
     unit = UnitDB(
         name="unit one",
@@ -108,31 +63,8 @@ async def test_can_not_create_duplicate_unit_name(
 
 @pytest.mark.asyncio
 async def test_can_get_unit_list(client: AsyncClient, session: AsyncSession):
-    division = DivisionDB(
-        name="operations", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
-    )
-    session.add(division)
-    await session.commit()
-    await session.refresh(division)
-    department = DepartmentDB(
-        name="shirt division",
-        division_uid=division.uid,
-        created_by=uuid.UUID(USER_ID),
-        modified_by=uuid.UUID(USER_ID),
-    )
-    session.add(department)
-    await session.commit()
-    await session.refresh(department)
-    section = SectionDB(
-        name="cutting",
-        department_uid=department.uid,
-        created_by=uuid.UUID(USER_ID),
-        modified_by=uuid.UUID(USER_ID),
-    )
+    section = await create_test_model('section', session)
 
-    session.add(section)
-    await session.commit()
-    await session.refresh(section)
     units = [
         UnitDB(
             name="unit one",
@@ -161,30 +93,8 @@ async def test_can_get_unit_list(client: AsyncClient, session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_can_get_unit_by_uid(client: AsyncClient, session: AsyncSession):
-    division = DivisionDB(
-        name="operations", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
-    )
-    session.add(division)
-    await session.commit()
-    await session.refresh(division)
-    department = DepartmentDB(
-        name="shirt division",
-        division_uid=division.uid,
-        created_by=uuid.UUID(USER_ID),
-        modified_by=uuid.UUID(USER_ID),
-    )
-    session.add(department)
-    await session.commit()
-    await session.refresh(department)
-    section = SectionDB(
-        name="preparation 1",
-        department_uid=department.uid,
-        created_by=uuid.UUID(USER_ID),
-        modified_by=uuid.UUID(USER_ID),
-    )
-    session.add(section)
-    await session.commit()
-    await session.refresh(section)
+    section = await create_test_model('section', session)
+
     unit = UnitDB(
         name="unit one",
         section_uid=section.uid,
@@ -212,30 +122,8 @@ async def test_unit_not_found(client: AsyncClient, session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_can_update_unit(client: AsyncClient, session: AsyncSession):
-    division = DivisionDB(
-        name="operations", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
-    )
-    session.add(division)
-    await session.commit()
-    await session.refresh(division)
-    department = DepartmentDB(
-        name="shirt division",
-        division_uid=division.uid,
-        created_by=uuid.UUID(USER_ID),
-        modified_by=uuid.UUID(USER_ID),
-    )
-    session.add(department)
-    await session.commit()
-    await session.refresh(department)
-    section = SectionDB(
-        name="preparation 1",
-        department_uid=department.uid,
-        created_by=uuid.UUID(USER_ID),
-        modified_by=uuid.UUID(USER_ID),
-    )
-    session.add(section)
-    await session.commit()
-    await session.refresh(section)
+    section = await create_test_model('section', session)
+
     unit = UnitDB(
         name="unit one",
         section_uid=section.uid,
@@ -259,30 +147,8 @@ async def test_can_update_unit(client: AsyncClient, session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_delete_unit(client: AsyncClient, session: AsyncSession):
-    division = DivisionDB(
-        name="operations", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
-    )
-    session.add(division)
-    await session.commit()
-    await session.refresh(division)
-    department = DepartmentDB(
-        name="shirt division",
-        division_uid=division.uid,
-        created_by=uuid.UUID(USER_ID),
-        modified_by=uuid.UUID(USER_ID),
-    )
-    session.add(department)
-    await session.commit()
-    await session.refresh(department)
-    section = SectionDB(
-        name="preparation 1",
-        department_uid=department.uid,
-        created_by=uuid.UUID(USER_ID),
-        modified_by=uuid.UUID(USER_ID),
-    )
-    session.add(section)
-    await session.commit()
-    await session.refresh(section)
+    section = await create_test_model('section', session)
+
     unit = UnitDB(
         name="unit one",
         section_uid=section.uid,
