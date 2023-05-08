@@ -8,7 +8,6 @@ from httpx import AsyncClient
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.organization_units.department import DepartmentDB
-from app.models.organization_units.division import DivisionDB
 from app.tests.test_organization_units.utils import create_test_model
 
 ENDPOINT: Final = "departments"
@@ -17,7 +16,7 @@ USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
 
 @pytest.mark.asyncio
 async def test_create_department(client: AsyncClient, session: AsyncSession):
-    division = await create_test_model('division', session)
+    division = await create_test_model("division", session)
 
     response = await client.post(
         f"/{ENDPOINT}",
@@ -35,7 +34,7 @@ async def test_create_department(client: AsyncClient, session: AsyncSession):
 async def test_department_names_are_lower_cased(
     client: AsyncClient, session: AsyncSession
 ):
-    division = await create_test_model('division', session)
+    division = await create_test_model("division", session)
 
     response = await client.post(
         f"/{ENDPOINT}",
@@ -53,7 +52,7 @@ async def test_department_names_are_lower_cased(
 async def test_can_not_create_duplicate_department_name(
     client: AsyncClient, session: AsyncSession
 ):
-    division = await create_test_model('division', session)
+    division = await create_test_model("division", session)
 
     department = DepartmentDB(
         name="shirt division",
@@ -79,7 +78,7 @@ async def test_can_not_create_duplicate_department_name(
 
 @pytest.mark.asyncio
 async def test_can_get_department_list(client: AsyncClient, session: AsyncSession):
-    division = await create_test_model('division', session)
+    division = await create_test_model("division", session)
 
     departments = [
         DepartmentDB(
@@ -111,7 +110,7 @@ async def test_can_get_department_list(client: AsyncClient, session: AsyncSessio
 
 @pytest.mark.asyncio
 async def test_can_get_department_by_uid(client: AsyncClient, session: AsyncSession):
-    division = await create_test_model('division', session)
+    division = await create_test_model("division", session)
 
     department = DepartmentDB(
         name="shirt division",
@@ -140,7 +139,7 @@ async def test_department_not_fount(client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_can_update_department(client: AsyncClient, session: AsyncSession):
-    division = await create_test_model('division', session)
+    division = await create_test_model("division", session)
 
     department = DepartmentDB(
         name="shirt division",
@@ -165,7 +164,7 @@ async def test_can_update_department(client: AsyncClient, session: AsyncSession)
 
 @pytest.mark.asyncio
 async def test_delete_department(client: AsyncClient, session: AsyncSession):
-    division = await create_test_model('division', session)
+    division = await create_test_model("division", session)
 
     department = DepartmentDB(
         name="shirt division",

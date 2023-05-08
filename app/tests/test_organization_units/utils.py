@@ -1,14 +1,18 @@
 """Organizational units testing utility functions module."""
 import uuid
-from typing import Final, Optional
+from typing import Final
 
-from sqlmodel import SQLModel
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
-from app.models import DivisionDB, DepartmentDB, SectionDB
+from app.models import DepartmentDB, DivisionDB, SectionDB
 
 USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
-async def create_test_model(model_name: str, session: AsyncSession) -> Optional[SQLModel]:
+
+
+async def create_test_model(
+    model_name: str, session: AsyncSession
+) -> DivisionDB | DepartmentDB | SectionDB:
+    """Create test models."""
     division = DivisionDB(
         name="operations", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
     )
@@ -16,7 +20,7 @@ async def create_test_model(model_name: str, session: AsyncSession) -> Optional[
     await session.commit()
     await session.refresh(division)
 
-    if model_name == 'division':
+    if model_name == "division":
         return division
 
     department = DepartmentDB(
@@ -29,7 +33,7 @@ async def create_test_model(model_name: str, session: AsyncSession) -> Optional[
     await session.commit()
     await session.refresh(department)
 
-    if model_name == 'department':
+    if model_name == "department":
         return department
 
     section = SectionDB(
@@ -42,5 +46,7 @@ async def create_test_model(model_name: str, session: AsyncSession) -> Optional[
     await session.commit()
     await session.refresh(section)
 
-    if model_name == 'section':
+    if model_name == "section":
         return section
+
+    raise ValueError("invalid model name")
