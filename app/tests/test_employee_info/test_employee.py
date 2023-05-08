@@ -38,7 +38,7 @@ async def test_create_employee(client: AsyncClient, session: AsyncSession):
     related = await initialize_related_tables(session)
     payload = copy.deepcopy(EMPLOYEE_TEST_DATA)
     payload.update(
-        current_job_uid=str(related["current_job"].uid),
+        designation_uid=str(related["designation"].uid),
         nationality_uid=str(related["nationality"].uid),
         sub_section_uid=str(related["sub_section"].uid),
         educational_level_uid=str(related["educational_level"].uid),
@@ -59,7 +59,7 @@ async def test_duplicate_violation(client: AsyncClient, session: AsyncSession):
     values = copy.deepcopy(EMPLOYEE_TEST_DATA)
     employee = EmployeeDB(
         **values,
-        current_job_uid=related["current_job"].uid,
+        designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
         sub_section_uid=related["sub_section"].uid,
         educational_level_uid=related["educational_level"].uid,
@@ -69,7 +69,7 @@ async def test_duplicate_violation(client: AsyncClient, session: AsyncSession):
 
     payload = copy.deepcopy(EMPLOYEE_TEST_DATA)
     payload.update(
-        current_job_uid=str(related["current_job"].uid),
+        designation_uid=str(related["designation"].uid),
         nationality_uid=str(related["nationality"].uid),
         sub_section_uid=str(related["sub_section"].uid),
         educational_level_uid=str(related["educational_level"].uid),
@@ -95,21 +95,21 @@ async def test_get_employees_list(client: AsyncClient, session: AsyncSession):
     employees = [
         EmployeeDB(
             **emp_one,
-            current_job_uid=related["current_job"].uid,
+            designation_uid=related["designation"].uid,
             nationality_uid=related["nationality"].uid,
             sub_section_uid=related["sub_section"].uid,
             educational_level_uid=related["educational_level"].uid,
         ),
         EmployeeDB(
             **emp_two,
-            current_job_uid=related["current_job"].uid,
+            designation_uid=related["designation"].uid,
             nationality_uid=related["nationality"].uid,
             sub_section_uid=related["sub_section"].uid,
             educational_level_uid=related["educational_level"].uid,
         ),
         EmployeeDB(
             **emp_three,
-            current_job_uid=related["current_job"].uid,
+            designation_uid=related["designation"].uid,
             nationality_uid=related["nationality"].uid,
             sub_section_uid=related["sub_section"].uid,
             educational_level_uid=related["educational_level"].uid,
@@ -133,7 +133,7 @@ async def test_get_employee_by_uid(client: AsyncClient, session: AsyncSession):
     values = copy.deepcopy(EMPLOYEE_TEST_DATA)
     employee = EmployeeDB(
         **values,
-        current_job_uid=related["current_job"].uid,
+        designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
         sub_section_uid=related["sub_section"].uid,
         educational_level_uid=related["educational_level"].uid,
@@ -161,7 +161,7 @@ async def test_can_update_employee(client: AsyncClient, session: AsyncSession):
     values = copy.deepcopy(EMPLOYEE_TEST_DATA)
     employee = EmployeeDB(
         **values,
-        current_job_uid=related["current_job"].uid,
+        designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
         sub_section_uid=related["sub_section"].uid,
         educational_level_uid=related["educational_level"].uid,

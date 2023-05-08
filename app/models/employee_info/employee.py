@@ -59,7 +59,7 @@ class EmployeeBase(SQLModel):
     current_salary: Decimal = Field(nullable=False, ge=0.00, default_factory=Decimal)
     current_hire_date: date = Field(nullable=False)
     current_termination_date: Optional[date] = Field(default=None, nullable=True)
-    current_job_uid: UUID = Field(nullable=False, foreign_key="current_job.uid")
+    designation_uid: UUID = Field(nullable=False, foreign_key="designation.uid")
     sub_section_uid: UUID = Field(nullable=False, foreign_key="sub_section.uid")
     is_active: bool = Field(default=True, nullable=False)
     nationality_uid: UUID = Field(nullable=False, foreign_key="nationality.uid")
@@ -115,7 +115,7 @@ class EmployeeUpdate(SQLModel):
     current_salary: Optional[Decimal]
     current_hire_date: Optional[date]
     current_termination_date: Optional[date]
-    current_job_uid: Optional[UUID]
+    designation_uid: Optional[UUID]
     sub_section_uid: Optional[UUID]
     is_active: Optional[bool]
     nationality_uid: Optional[UUID]

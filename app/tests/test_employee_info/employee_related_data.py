@@ -6,8 +6,8 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.employee_info.educational_level import EducationalLevelDB
 from app.models.employee_info.nationalities import NationalityDB
-from app.models.organization_units.current_job import CurrentJobDB
 from app.models.organization_units.department import DepartmentDB
+from app.models.organization_units.designation import DesignationDB
 from app.models.organization_units.section import SectionDB
 from app.models.organization_units.sub_section import SubSectionDB
 
@@ -45,14 +45,14 @@ async def initialize_related_tables(session: AsyncSession) -> dict[str, Any]:
     await session.commit()
     await session.refresh(sub_section)
 
-    current_job = CurrentJobDB(
-        title="current job one",
+    designation = DesignationDB(
+        title="designation one",
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )
-    session.add(current_job)
+    session.add(designation)
     await session.commit()
-    await session.refresh(current_job)
+    await session.refresh(designation)
 
     nationality = NationalityDB(
         name="eritrean", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
@@ -72,7 +72,7 @@ async def initialize_related_tables(session: AsyncSession) -> dict[str, Any]:
         "department": department,
         "section": section,
         "sub_section": sub_section,
-        "current_job": current_job,
+        "designation": designation,
         "nationality": nationality,
         "educational_level": educational_level,
     }

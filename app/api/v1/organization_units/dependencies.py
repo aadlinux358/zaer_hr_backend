@@ -2,8 +2,8 @@
 from fastapi import Depends
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.api.v1.organization_units.current_job_crud import CurrentJobCRUD
 from app.api.v1.organization_units.department_crud import DepartmentCRUD
+from app.api.v1.organization_units.designation_crud import DesignationCRUD
 from app.api.v1.organization_units.section_crud import SectionCRUD
 from app.api.v1.organization_units.sub_section_crud import SubSectionCRUD
 from app.core.db import get_async_session
@@ -30,8 +30,8 @@ async def get_sub_sections_crud(
     return SubSectionCRUD(session=session)
 
 
-async def get_current_job_crud(
+async def get_designation_crud(
     session: AsyncSession = Depends(get_async_session),
-) -> CurrentJobCRUD:
-    """Dependency function that initialize current job crud operations class."""
-    return CurrentJobCRUD(session=session)
+) -> DesignationCRUD:
+    """Dependency function that initialize designation crud operations class."""
+    return DesignationCRUD(session=session)

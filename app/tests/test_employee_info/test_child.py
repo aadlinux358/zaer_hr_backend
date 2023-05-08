@@ -40,7 +40,7 @@ async def test_create_child(client: AsyncClient, session: AsyncSession):
     values = copy.deepcopy(EMPLOYEE_TEST_DATA)
     employee = EmployeeDB(
         **values,
-        current_job_uid=related["current_job"].uid,
+        designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
         sub_section_uid=related["sub_section"].uid,
         educational_level_uid=related["educational_level"].uid,
@@ -74,7 +74,7 @@ async def test_duplicate_child(client: AsyncClient, session: AsyncSession):
     values = copy.deepcopy(EMPLOYEE_TEST_DATA)
     employee = EmployeeDB(
         **values,
-        current_job_uid=related["current_job"].uid,
+        designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
         sub_section_uid=related["sub_section"].uid,
         educational_level_uid=related["educational_level"].uid,
@@ -115,7 +115,7 @@ async def test_can_get_children(client: AsyncClient, session: AsyncSession):
     values = copy.deepcopy(EMPLOYEE_TEST_DATA)
     employee = EmployeeDB(
         **values,
-        current_job_uid=related["current_job"].uid,
+        designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
         sub_section_uid=related["sub_section"].uid,
         educational_level_uid=related["educational_level"].uid,
@@ -168,7 +168,7 @@ async def test_can_get_child_by_uid(client: AsyncClient, session: AsyncSession):
     values = copy.deepcopy(EMPLOYEE_TEST_DATA)
     employee = EmployeeDB(
         **values,
-        current_job_uid=related["current_job"].uid,
+        designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
         sub_section_uid=related["sub_section"].uid,
         educational_level_uid=related["educational_level"].uid,
@@ -210,7 +210,7 @@ async def test_update_child(client: AsyncClient, session: AsyncSession):
     values = copy.deepcopy(EMPLOYEE_TEST_DATA)
     employee = EmployeeDB(
         **values,
-        current_job_uid=related["current_job"].uid,
+        designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
         sub_section_uid=related["sub_section"].uid,
         educational_level_uid=related["educational_level"].uid,
@@ -251,7 +251,7 @@ async def test_delete_child(client: AsyncClient, session: AsyncSession):
     values = copy.deepcopy(EMPLOYEE_TEST_DATA)
     employee = EmployeeDB(
         **values,
-        current_job_uid=related["current_job"].uid,
+        designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
         sub_section_uid=related["sub_section"].uid,
         educational_level_uid=related["educational_level"].uid,
