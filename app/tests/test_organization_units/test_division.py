@@ -151,6 +151,6 @@ async def test_download_csv(client: AsyncClient, session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_download_excel(client: AsyncClient):
-    response = await client.get(f"{ENDPOINT}/download/excel")
+    response = await client.get(f"{ENDPOINT}/download/xlsx")
 
     assert response.status_code == status.HTTP_200_OK

@@ -123,7 +123,7 @@ async def download_csv(
     return FileResponse("hr_tmp/divisions.csv")
 
 
-@router.get("/download/excel", response_class=FileResponse)
+@router.get("/download/xlsx", response_class=FileResponse)
 async def download_excel(
     divisions: DivisionCRUDDep, Authorize: AuthJWTDep
 ) -> FileResponse:
