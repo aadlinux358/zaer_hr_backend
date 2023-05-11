@@ -2,7 +2,9 @@
 from typing import Annotated
 from uuid import UUID
 
+import pandas as pd
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import FileResponse
 from fastapi_jwt_auth import AuthJWT  # type: ignore
 from sqlalchemy.exc import IntegrityError
 
@@ -109,3 +111,25 @@ async def delete_department(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="department not found."
         )
+
+
+@router.get("/download/csv", response_class=FileResponse)
+async def download_csv(departments: DepartmentCRUDDep, Authorize: AuthJWTDep):
+    """Download departments as csv."""
+    # Authorize.jwt_required()
+    department_list = await departments.read_many()
+    df = pd.DataFrame([d.dict() for d in department_list.result])
+    df.to_csv("hr_tmp/departments.csv", index=False)
+    return FileResponse("hr_tmp/departments.csv")
+
+
+@router.get("/download/xlsx", response_class=FileResponse)
+async def download_excel(
+    departments: DepartmentCRUDDep, Authorize: AuthJWTDep
+) -> FileResponse:
+    """Download departments as excel."""
+    Authorize.jwt_required()
+    department_list = await departments.read_many()
+    df = pd.DataFrame([d.dict() for d in department_list.result])
+    df.to_excel("hr_tmp/departments.xlsx", index=False)
+    return FileResponse("hr_tmp/departments.xlsx")

@@ -178,3 +178,22 @@ async def test_delete_department(client: AsyncClient, session: AsyncSession):
 
     response = await client.delete(f"/{ENDPOINT}/{department.uid}")
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.json()
+
+
+@pytest.mark.asyncio
+async def test_download_csv(client: AsyncClient):
+    response = await client.get(f"{ENDPOINT}/download/csv")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert "text/csv" in response.headers["Content-Type"]
+
+
+@pytest.mark.asyncio
+async def test_download_excel(client: AsyncClient):
+    response = await client.get(f"{ENDPOINT}/download/xlsx")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert (
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        in response.headers["Content-Type"]
+    )
