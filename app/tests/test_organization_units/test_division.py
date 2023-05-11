@@ -154,3 +154,7 @@ async def test_download_excel(client: AsyncClient):
     response = await client.get(f"{ENDPOINT}/download/xlsx")
 
     assert response.status_code == status.HTTP_200_OK
+    assert (
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        in response.headers["Content-Type"]
+    )

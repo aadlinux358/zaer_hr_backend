@@ -132,4 +132,4 @@ async def download_excel(
     divisions_list = await divisions.read_many()
     df = pd.DataFrame([d.dict() for d in divisions_list.result])
     df.to_excel("hr_tmp/divisions.xlsx", index=False)
-    return FileResponse("hr_tmp/divisions.xlsx")
+    return FileResponse("hr_tmp/divisions.xlsx", filename="divisions.xlsx")
