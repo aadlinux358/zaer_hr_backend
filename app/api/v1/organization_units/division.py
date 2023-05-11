@@ -2,7 +2,9 @@
 from typing import Annotated
 from uuid import UUID
 
+import pandas as pd
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import FileResponse
 from fastapi_jwt_auth import AuthJWT  # type: ignore
 from sqlalchemy.exc import IntegrityError
 
@@ -107,3 +109,27 @@ async def delete_division(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="division not found."
         )
+
+
+@router.get("/download/csv", response_class=FileResponse)
+async def download_csv(
+    divisions: DivisionCRUDDep, Authorize: AuthJWTDep
+) -> FileResponse:
+    """Download divisions as csv."""
+    Authorize.jwt_required()
+    divisions_list = await divisions.read_many()
+    df = pd.DataFrame([d.dict() for d in divisions_list.result])
+    df.to_csv("hr_tmp/divisions.csv", index=False)
+    return FileResponse("hr_tmp/divisions.csv")
+
+
+@router.get("/download/excel", response_class=FileResponse)
+async def download_excel(
+    divisions: DivisionCRUDDep, Authorize: AuthJWTDep
+) -> FileResponse:
+    """Download divisions as excel."""
+    Authorize.jwt_required()
+    divisions_list = await divisions.read_many()
+    df = pd.DataFrame([d.dict() for d in divisions_list.result])
+    df.to_excel("hr_tmp/divisions.xlsx", index=False)
+    return FileResponse("hr_tmp/divisions.xlsx")

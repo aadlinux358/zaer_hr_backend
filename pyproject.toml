@@ -15,6 +15,9 @@ sqlmodel = "^0.0.8"
 fastapi-jwt-auth = {extras = ["asymmetric"], version = "^0.5.0"}
 requests = "^2.30.0"
 types-requests = "^2.30.0.0"
+pandas = "^2.0.1"
+openpyxl = "^3.1.2"
+pandas-stubs = "^2.0.1.230501"
 
 
 [tool.poetry.group.dev.dependencies]

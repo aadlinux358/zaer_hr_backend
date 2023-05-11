@@ -1,8 +1,8 @@
 """FastAPI application entry point module."""
 import pathlib
 import shutil
-from typing import Final
 from contextlib import asynccontextmanager
+from typing import Final
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,12 +16,15 @@ from app.models.health.health_check import HealthCheck
 
 origins: Final = ["*"]
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-   p = pathlib.Path('hr_tmp')
-   p.mkdir(exist_ok=True)
-   yield
-   shutil.rmtree(p)
+    """Startup and shutdown hook."""
+    p = pathlib.Path("hr_tmp")
+    p.mkdir(exist_ok=True)
+    yield
+    shutil.rmtree(p)
+
 
 app = FastAPI(lifespan=lifespan, description="ZaEr Human Resources App")
 

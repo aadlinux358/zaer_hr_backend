@@ -139,3 +139,18 @@ async def test_delete_division(client: AsyncClient, session: AsyncSession):
 
     response = await client.delete(f"/{ENDPOINT}/{division.uid}")
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.json()
+
+
+@pytest.mark.asyncio
+async def test_download_csv(client: AsyncClient, session: AsyncSession):
+    response = await client.get(f"{ENDPOINT}/download/csv")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert "text/csv" in response.headers["Content-Type"]
+
+
+@pytest.mark.asyncio
+async def test_download_excel(client: AsyncClient):
+    response = await client.get(f"{ENDPOINT}/download/excel")
+
+    assert response.status_code == status.HTTP_200_OK
