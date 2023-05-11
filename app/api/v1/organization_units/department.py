@@ -16,6 +16,8 @@ from app.models.organization_units.department import (
     DepartmentCreate,
     DepartmentRead,
     DepartmentReadMany,
+    DepartmentReadManyPrintFormat,
+    DepartmentReadPrintFormat,
     DepartmentUpdate,
     DepartmentUpdateBase,
 )
@@ -59,6 +61,15 @@ async def read_many(departments: DepartmentCRUDDep, Authorize: AuthJWTDep):
     return department_list
 
 
+@router.get("/for/print", response_model=DepartmentReadManyPrintFormat)
+async def read_many_print_format(departments: DepartmentCRUDDep, Authorize: AuthJWTDep):
+    """Read many departments."""
+    Authorize.jwt_required()
+    department_list = await departments.read_many_print_format()
+
+    return department_list
+
+
 @router.get("/{department_uid}", response_model=DepartmentRead)
 async def read_by_uid(
     department_uid: UUID, departments: DepartmentCRUDDep, Authorize: AuthJWTDep
@@ -66,6 +77,20 @@ async def read_by_uid(
     """Read department by uid."""
     Authorize.jwt_required()
     department = await departments.read_by_uid(department_uid)
+    if department is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="department not found."
+        )
+    return department
+
+
+@router.get("/{department_uid}/for/print", response_model=DepartmentReadPrintFormat)
+async def read_by_uid_print_format(
+    department_uid: UUID, departments: DepartmentCRUDDep, Authorize: AuthJWTDep
+):
+    """Read department by uid."""
+    Authorize.jwt_required()
+    department = await departments.read_by_uid_print_format(department_uid)
     if department is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="department not found."

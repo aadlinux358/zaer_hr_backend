@@ -109,6 +109,42 @@ async def test_can_get_department_list(client: AsyncClient, session: AsyncSessio
 
 
 @pytest.mark.asyncio
+async def test_can_get_departments_print_format(
+    client: AsyncClient, session: AsyncSession
+):
+    division = await create_test_model("division", session)
+
+    departments = [
+        DepartmentDB(
+            name="shirt division",
+            division_uid=division.uid,
+            created_by=uuid.UUID(USER_ID),
+            modified_by=uuid.UUID(USER_ID),
+        ),
+        DepartmentDB(
+            name="garment division",
+            division_uid=division.uid,
+            created_by=uuid.UUID(USER_ID),
+            modified_by=uuid.UUID(USER_ID),
+        ),
+    ]
+
+    for department in departments:
+        session.add(department)
+
+    await session.commit()
+
+    response = await client.get(f"{ENDPOINT}/for/print")
+
+    assert response.status_code == status.HTTP_200_OK, response.json()
+    assert response.json()["count"] == 2
+    assert len(response.json()["result"]) == 2
+    assert isinstance(response.json()["result"], list)
+    for d in response.json()["result"]:
+        assert d["division"] == division.name
+
+
+@pytest.mark.asyncio
 async def test_can_get_department_by_uid(client: AsyncClient, session: AsyncSession):
     division = await create_test_model("division", session)
 
@@ -127,6 +163,30 @@ async def test_can_get_department_by_uid(client: AsyncClient, session: AsyncSess
     assert response.status_code == status.HTTP_200_OK, response.json()
     assert response.json()["uid"] == str(department.uid)
     assert response.json()["name"] == "shirt division"
+
+
+@pytest.mark.asyncio
+async def test_can_get_department_by_uid_print_format(
+    client: AsyncClient, session: AsyncSession
+):
+    division = await create_test_model("division", session)
+
+    department = DepartmentDB(
+        name="shirt dep",
+        division_uid=division.uid,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
+    )
+    session.add(department)
+    await session.commit()
+    await session.refresh(department)
+
+    response = await client.get(f"/{ENDPOINT}/{department.uid}/for/print")
+
+    assert response.status_code == status.HTTP_200_OK, response.json()
+    assert response.json()["uid"] == str(department.uid)
+    assert response.json()["name"] == "shirt dep"
+    assert response.json()["division"] == division.name
 
 
 @pytest.mark.asyncio

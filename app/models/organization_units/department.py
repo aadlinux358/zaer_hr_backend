@@ -57,8 +57,27 @@ class DepartmentRead(DepartmentCreate):
     date_modified: datetime
 
 
+class DepartmentReadPrintFormat(SQLModel):
+    """Department model for printing."""
+
+    uid: UUID
+    name: str
+    division: str  # instead of uuid
+    created_by: UUID
+    modified_by: UUID
+    date_created: datetime
+    date_modified: datetime
+
+
 class DepartmentReadMany(SQLModel):
-    """Department model for reading many departmentss."""
+    """Department model for reading many departments."""
 
     count: int
     result: list[DepartmentRead]
+
+
+class DepartmentReadManyPrintFormat(SQLModel):
+    """Department read many departments for printing."""
+
+    count: int
+    result: list[DepartmentReadPrintFormat]
