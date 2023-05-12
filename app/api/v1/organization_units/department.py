@@ -141,8 +141,8 @@ async def delete_department(
 @router.get("/download/csv", response_class=FileResponse)
 async def download_csv(departments: DepartmentCRUDDep, Authorize: AuthJWTDep):
     """Download departments as csv."""
-    # Authorize.jwt_required()
-    department_list = await departments.read_many()
+    Authorize.jwt_required()
+    department_list = await departments.read_many_print_format()
     df = pd.DataFrame([d.dict() for d in department_list.result])
     df.to_csv("hr_tmp/departments.csv", index=False)
     return FileResponse("hr_tmp/departments.csv")
