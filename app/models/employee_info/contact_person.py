@@ -12,10 +12,10 @@ class ContactPersonBase(SQLModel):
     """Contact person base model."""
 
     employee_uid: UUID = Field(nullable=False, unique=True, foreign_key="employee.uid")
-    first_name: str = Field(nullable=False)
-    last_name: str = Field(nullable=False)
-    phone_number: str = Field(nullable=False, unique=True)
-    relationship_to_employee: str = Field(nullable=False)
+    first_name: str = Field(nullable=False, max_length=100, min_length=1)
+    last_name: str = Field(nullable=False, max_length=100, min_length=1)
+    phone_number: str = Field(nullable=False, unique=True, max_length=100, min_length=1)
+    relationship_to_employee: str = Field(nullable=False, max_length=100, min_length=1)
 
 
 class ContactPersonCreate(ContactPersonBase):

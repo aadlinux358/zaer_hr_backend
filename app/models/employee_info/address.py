@@ -12,8 +12,8 @@ class AddressBase(SQLModel):
     """Address base model."""
 
     employee_uid: UUID = Field(nullable=False, foreign_key="employee.uid", unique=True)
-    city: str = Field(nullable=False)
-    district: str = Field(nullable=False)
+    city: str = Field(nullable=False, max_length=100, min_length=1)
+    district: str = Field(nullable=False, max_length=100, min_length=1)
 
 
 class AddressCreate(AddressBase):

@@ -13,7 +13,7 @@ class ChildBase(SQLModel):
     """Child base model."""
 
     parent_uid: UUID = Field(nullable=False, foreign_key="employee.uid")
-    first_name: str = Field(nullable=False, index=True)
+    first_name: str = Field(nullable=False, index=True, max_length=100, min_length=1)
     gender: Gender = Field(
         nullable=False,
         max_length=1,

@@ -46,9 +46,9 @@ class EmployeeBase(SQLModel):
     """Employee base model with shared attributes."""
 
     badge_number: int = Field(nullable=False, unique=True, index=True, ge=1)
-    first_name: str = Field(max_length=200, nullable=False)
-    last_name: str = Field(max_length=200, nullable=False)
-    grandfather_name: str = Field(max_length=200, nullable=False)
+    first_name: str = Field(max_length=200, min_length=1, nullable=False)
+    last_name: str = Field(max_length=200, min_length=1, nullable=False)
+    grandfather_name: str = Field(max_length=200, min_length=1, nullable=False)
     gender: Gender = Field(
         nullable=False,
         max_length=1,
@@ -63,9 +63,21 @@ class EmployeeBase(SQLModel):
     unit_uid: UUID
     is_active: bool = Field(default=True, nullable=False)
     nationality_uid: UUID = Field(nullable=False, foreign_key="nationality.uid")
-    birth_place: str = Field(nullable=False, max_length=100)
-    mother_first_name: str = Field(nullable=False, max_length=100)
-    mother_last_name: str = Field(nullable=False, max_length=100)
+    birth_place: str = Field(
+        nullable=False,
+        max_length=100,
+        min_length=1,
+    )
+    mother_first_name: str = Field(
+        nullable=False,
+        max_length=100,
+        min_length=1,
+    )
+    mother_last_name: str = Field(
+        nullable=False,
+        max_length=100,
+        min_length=1,
+    )
     marital_status: MaritalStatus = Field(
         default=MaritalStatus.SINGLE.value,
         nullable=False,
@@ -78,8 +90,8 @@ class EmployeeBase(SQLModel):
     educational_level_uid: UUID = Field(
         nullable=False, foreign_key="educational_level.uid"
     )
-    phone_number: str = Field(nullable=True, unique=True)
-    national_id: str = Field(nullable=True, unique=True)
+    phone_number: str = Field(nullable=True, unique=True, max_length=100, min_length=1)
+    national_id: str = Field(nullable=True, unique=True, max_length=100, min_length=1)
     contract_type: ContractType = Field(
         default=ContractType.FULL_TIME.value,
         nullable=False,

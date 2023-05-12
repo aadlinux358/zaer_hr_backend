@@ -11,7 +11,7 @@ from app.models.shared.base import Base
 class EducationalLevelBase(SQLModel):
     """Educational level base model."""
 
-    level: str = Field(nullable=False, unique=True)
+    level: str = Field(nullable=False, unique=True, max_length=100, min_length=1)
 
 
 class EducationalLevelCreate(EducationalLevelBase):

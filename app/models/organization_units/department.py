@@ -14,7 +14,9 @@ if TYPE_CHECKING:
 class DepartmentBase(SQLModel):
     """Department base class that contains shared attributes."""
 
-    name: str = Field(nullable=False, unique=True, max_length=100, index=True)
+    name: str = Field(
+        nullable=False, unique=True, max_length=100, min_length=1, index=True
+    )
     division_uid: UUID
 
 
