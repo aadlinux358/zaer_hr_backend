@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Callable, ClassVar, Optional, Union
 from uuid import UUID
 
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, Relationship, SQLModel, UniqueConstraint
 
 from app.models.shared.base import Base
 
@@ -14,9 +14,7 @@ if TYPE_CHECKING:
 class SectionBase(SQLModel):
     """section base class containing shared attrs."""
 
-    name: str = Field(
-        nullable=False, unique=True, max_length=100, min_length=1, index=True
-    )
+    name: str = Field(nullable=False, max_length=100, min_length=1, index=True)
     department_uid: UUID
 
 
@@ -44,6 +42,7 @@ class SectionDB(Base, SectionBase, table=True):
     """section model for database table."""
 
     __tablename__: ClassVar[Union[str, Callable[..., str]]] = "section"
+    __table_args__ = (UniqueConstraint("department_uid", "name"),)
     department_uid: UUID = Field(foreign_key="department.uid")
     department: "DepartmentDB" = Relationship(back_populates="sections")
     units: list["UnitDB"] = Relationship(back_populates="section")
