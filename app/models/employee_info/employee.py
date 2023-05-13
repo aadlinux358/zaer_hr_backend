@@ -5,7 +5,7 @@ from enum import Enum
 from typing import Callable, ClassVar, Optional, Union
 from uuid import UUID
 
-from sqlmodel import CheckConstraint, Field, SQLModel
+from sqlmodel import CheckConstraint, Field, Identity, SQLModel
 
 from app.models.shared.base import Base
 
@@ -45,7 +45,6 @@ class NationalService(str, Enum):
 class EmployeeBase(SQLModel):
     """Employee base model with shared attributes."""
 
-    badge_number: int = Field(nullable=False, unique=True, index=True, ge=1)
     first_name: str = Field(max_length=200, min_length=1, nullable=False)
     last_name: str = Field(max_length=200, min_length=1, nullable=False)
     grandfather_name: str = Field(max_length=200, min_length=1, nullable=False)
@@ -58,7 +57,6 @@ class EmployeeBase(SQLModel):
     birth_date: date = Field(nullable=False)
     current_salary: Decimal = Field(nullable=False, ge=0.00, default_factory=Decimal)
     current_hire_date: date = Field(nullable=False)
-    current_termination_date: Optional[date] = Field(default=None, nullable=True)
     designation_uid: UUID = Field(nullable=False, foreign_key="designation.uid")
     unit_uid: UUID
     is_active: bool = Field(default=True, nullable=False)
@@ -118,7 +116,6 @@ class EmployeeCreate(EmployeeBase):
 class EmployeeUpdate(SQLModel):
     """Employee update model."""
 
-    badge_number: Optional[int]
     first_name: Optional[str]
     last_name: Optional[str]
     grandfather_name: Optional[str]
@@ -126,7 +123,6 @@ class EmployeeUpdate(SQLModel):
     birth_date: Optional[date]
     current_salary: Optional[Decimal]
     current_hire_date: Optional[date]
-    current_termination_date: Optional[date]
     designation_uid: Optional[UUID]
     unit_uid: Optional[UUID]
     is_active: Optional[bool]
@@ -147,6 +143,9 @@ class EmployeeDB(Base, EmployeeBase, table=True):
     """Employee model for database table."""
 
     __tablename__: ClassVar[Union[str, Callable[..., str]]] = "employee"
+    badge_number: int = Field(
+        nullable=False, unique=True, index=True, sa_column_args=(Identity(always=True),)
+    )
     unit_uid: UUID = Field(nullable=False, foreign_key="unit.uid")
 
 
@@ -154,6 +153,7 @@ class EmployeeRead(EmployeeCreate):
     """Employee read one model."""
 
     uid: UUID
+    badge_number: int
     created_by: UUID
     modified_by: UUID
     date_created: datetime

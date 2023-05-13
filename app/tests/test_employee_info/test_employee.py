@@ -15,7 +15,6 @@ from .employee_related_data import initialize_related_tables
 ENDPOINT: Final = "employees"
 USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
 EMPLOYEE_TEST_DATA: Final = {
-    "badge_number": 1234,
     "first_name": "Semere",
     "last_name": "Tewelde",
     "grandfather_name": "Kidane",
@@ -47,6 +46,7 @@ async def test_create_employee(client: AsyncClient, session: AsyncSession):
 
     assert response.status_code == status.HTTP_201_CREATED, response.json()
     response_json = response.json()
+    assert response.json()["badge_number"] == 1
     for k, v in EMPLOYEE_TEST_DATA.items():
         if isinstance(v, str):
             v = v.lower().strip()
@@ -87,11 +87,11 @@ async def test_duplicate_violation(client: AsyncClient, session: AsyncSession):
 async def test_get_employees_list(client: AsyncClient, session: AsyncSession):
     related = await initialize_related_tables(session)
     emp_one = copy.deepcopy(EMPLOYEE_TEST_DATA)
-    emp_one.update(badge_number=1, phone_number="07112244", national_id="7654321`")
+    emp_one.update(phone_number="07112244", national_id="7654321`")
     emp_two = copy.deepcopy(EMPLOYEE_TEST_DATA)
-    emp_two.update(badge_number=2, phone_number="07112255", national_id="1234567")
+    emp_two.update(phone_number="07112255", national_id="1234567")
     emp_three = copy.deepcopy(EMPLOYEE_TEST_DATA)
-    emp_three.update(badge_number=3, phone_number="07112266", national_id="9988776")
+    emp_three.update(phone_number="07112266", national_id="9988776")
     employees = [
         EmployeeDB(
             **emp_one,

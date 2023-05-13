@@ -16,7 +16,6 @@ from app.tests.test_employee_info.employee_related_data import initialize_relate
 ENDPOINT: Final = "children"
 USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
 EMPLOYEE_TEST_DATA: Final = {
-    "badge_number": 1234,
     "first_name": "Semere",
     "last_name": "Tewelde",
     "grandfather_name": "Kidane",
