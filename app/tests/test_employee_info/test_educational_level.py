@@ -17,7 +17,9 @@ USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
 async def test_can_create_educational_level(client: AsyncClient):
     response = await client.post(
         f"/{ENDPOINT}",
-        json={"level": "10th", "created_by": USER_ID, "modified_by": USER_ID},
+        json={
+            "level": "10th",
+        },
     )
 
     assert response.status_code == status.HTTP_201_CREATED, response.json()
@@ -30,7 +32,9 @@ async def test_can_create_educational_level(client: AsyncClient):
 async def test_educational_level_levels_are_lower_cased(client: AsyncClient):
     response = await client.post(
         f"/{ENDPOINT}",
-        json={"level": "7th", "created_by": USER_ID, "modified_by": USER_ID},
+        json={
+            "level": "7th",
+        },
     )
 
     assert response.status_code == status.HTTP_201_CREATED, response.json()
@@ -49,7 +53,9 @@ async def test_can_not_create_duplicate_educational_level_level(
 
     response = await client.post(
         f"/{ENDPOINT}",
-        json={"level": "8th", "created_by": USER_ID, "modified_by": USER_ID},
+        json={
+            "level": "8th",
+        },
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.json()
     assert response.json()["detail"] == "duplicate educational level."
@@ -125,7 +131,9 @@ async def test_can_update_educational_level(client: AsyncClient, session: AsyncS
 
     response = await client.patch(
         f"/{ENDPOINT}/{educational_level.uid}",
-        json={"level": "12th", "modified_by": USER_ID},
+        json={
+            "level": "12th",
+        },
     )
 
     assert response.status_code == status.HTTP_200_OK, response.json()
@@ -135,6 +143,7 @@ async def test_can_update_educational_level(client: AsyncClient, session: AsyncS
     assert (
         response.json()["date_modified"] != educational_level.date_modified.isoformat()
     )
+    assert response.json()["modified_by"] == USER_ID
 
 
 @pytest.mark.asyncio

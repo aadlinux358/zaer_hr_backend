@@ -21,7 +21,13 @@ class EducationalLevelCreate(EducationalLevelBase):
     modified_by: UUID
 
 
-class EducationalLevelUpdate(SQLModel):
+class EducationalLevelUpdateBase(SQLModel):
+    """Educational level update base model."""
+
+    level: Optional[str]
+
+
+class EducationalLevelUpdate(EducationalLevelUpdateBase):
     """Educational level update model."""
 
     level: Optional[str]
