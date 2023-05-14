@@ -17,7 +17,7 @@ USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
 async def test_can_create_nationality(client: AsyncClient):
     response = await client.post(
         f"/{ENDPOINT}",
-        json={"name": "eritrean", "created_by": USER_ID, "modified_by": USER_ID},
+        json={"name": "eritrean"},
     )
 
     assert response.status_code == status.HTTP_201_CREATED, response.json()
@@ -30,7 +30,7 @@ async def test_can_create_nationality(client: AsyncClient):
 async def test_nationality_names_are_lower_cased(client: AsyncClient):
     response = await client.post(
         f"/{ENDPOINT}",
-        json={"name": "AMEriCan", "created_by": USER_ID, "modified_by": USER_ID},
+        json={"name": "AMEriCan"},
     )
 
     assert response.status_code == status.HTTP_201_CREATED, response.json()
@@ -49,7 +49,9 @@ async def test_can_not_create_duplicate_nationality_name(
 
     response = await client.post(
         f"/{ENDPOINT}",
-        json={"name": "eritrean", "created_by": USER_ID, "modified_by": USER_ID},
+        json={
+            "name": "eritrean",
+        },
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.json()
     assert response.json()["detail"] == "duplicate nationality name."
@@ -121,7 +123,7 @@ async def test_can_update_nationality(client: AsyncClient, session: AsyncSession
 
     response = await client.patch(
         f"/{ENDPOINT}/{nationality.uid}",
-        json={"name": "german", "modified_by": USER_ID},
+        json={"name": "german"},
     )
 
     assert response.status_code == status.HTTP_200_OK, response.json()
@@ -129,6 +131,7 @@ async def test_can_update_nationality(client: AsyncClient, session: AsyncSession
     assert response.json()["name"] == "german"
     assert response.json()["date_created"] == nationality.date_created.isoformat()
     assert response.json()["date_modified"] != nationality.date_modified.isoformat()
+    assert response.json()["modified_by"] == USER_ID
 
 
 @pytest.mark.asyncio

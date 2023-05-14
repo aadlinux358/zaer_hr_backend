@@ -21,10 +21,15 @@ class NationalityCreate(NationalityBase):
     modified_by: UUID
 
 
-class NationalityUpdate(SQLModel):
-    """Nationality update model."""
+class NationalityUpdateBase(SQLModel):
+    """Nationality update base model."""
 
     name: Optional[str]
+
+
+class NationalityUpdate(NationalityUpdateBase):
+    """Nationality update model."""
+
     modified_by: UUID
 
 
