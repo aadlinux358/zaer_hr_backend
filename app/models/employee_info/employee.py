@@ -113,8 +113,8 @@ class EmployeeCreate(EmployeeBase):
     modified_by: UUID
 
 
-class EmployeeUpdate(SQLModel):
-    """Employee update model."""
+class EmployeeUpdateBase(SQLModel):
+    """Employee update base model."""
 
     first_name: Optional[str]
     last_name: Optional[str]
@@ -136,6 +136,11 @@ class EmployeeUpdate(SQLModel):
     national_id: Optional[str]
     contract_type: Optional[ContractType]
     national_service: Optional[NationalService]
+
+
+class EmployeeUpdate(EmployeeUpdateBase):
+    """Employee update model."""
+
     modified_by: UUID
 
 

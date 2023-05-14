@@ -27,8 +27,6 @@ EMPLOYEE_TEST_DATA: Final = {
     "mother_last_name": "mebrahtu",
     "phone_number": "07112233",
     "national_id": "2345677",
-    "created_by": USER_ID,
-    "modified_by": USER_ID,
 }
 
 
@@ -63,6 +61,8 @@ async def test_duplicate_violation(client: AsyncClient, session: AsyncSession):
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
     )
     session.add(employee)
     await session.commit()
@@ -99,6 +99,8 @@ async def test_get_employees_list(client: AsyncClient, session: AsyncSession):
             nationality_uid=related["nationality"].uid,
             unit_uid=related["unit"].uid,
             educational_level_uid=related["educational_level"].uid,
+            created_by=uuid.UUID(USER_ID),
+            modified_by=uuid.UUID(USER_ID),
         ),
         EmployeeDB(
             **emp_two,
@@ -106,6 +108,8 @@ async def test_get_employees_list(client: AsyncClient, session: AsyncSession):
             nationality_uid=related["nationality"].uid,
             unit_uid=related["unit"].uid,
             educational_level_uid=related["educational_level"].uid,
+            created_by=uuid.UUID(USER_ID),
+            modified_by=uuid.UUID(USER_ID),
         ),
         EmployeeDB(
             **emp_three,
@@ -113,6 +117,8 @@ async def test_get_employees_list(client: AsyncClient, session: AsyncSession):
             nationality_uid=related["nationality"].uid,
             unit_uid=related["unit"].uid,
             educational_level_uid=related["educational_level"].uid,
+            created_by=uuid.UUID(USER_ID),
+            modified_by=uuid.UUID(USER_ID),
         ),
     ]
     for employee in employees:
@@ -137,6 +143,8 @@ async def test_get_employee_by_uid(client: AsyncClient, session: AsyncSession):
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
     )
     session.add(employee)
     await session.commit()
@@ -165,12 +173,14 @@ async def test_can_update_employee(client: AsyncClient, session: AsyncSession):
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
     )
     session.add(employee)
     await session.commit()
     await session.refresh(employee)
 
-    payload = {"first_name": "john", "phone_number": "07222222", "modified_by": USER_ID}
+    payload = {"first_name": "john", "phone_number": "07222222"}
 
     response = await client.patch(f"{ENDPOINT}/{employee.uid}", json=payload)
 
