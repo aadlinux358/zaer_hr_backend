@@ -1,4 +1,5 @@
 """FastAPI application entry point module."""
+import logging
 import pathlib
 import shutil
 from contextlib import asynccontextmanager
@@ -14,15 +15,21 @@ from app.api import api_router
 from app.core.settings import settings
 from app.models.health.health_check import HealthCheck
 
+logging.basicConfig(level="INFO")
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 origins: Final = ["*"]
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup and shutdown hook."""
+    logger.info("Creating hr_tmp dir...")
     p = pathlib.Path("hr_tmp")
     p.mkdir(exist_ok=True)
     yield
+    logger.info("Removing hr_tmp dir...")
     shutil.rmtree(p)
 
 
