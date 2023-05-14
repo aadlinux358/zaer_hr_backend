@@ -1,4 +1,5 @@
 """Division api endpoints module."""
+import pathlib
 from typing import Annotated
 from uuid import UUID
 
@@ -131,5 +132,8 @@ async def download_excel(
     Authorize.jwt_required()
     divisions_list = await divisions.read_many()
     df = pd.DataFrame([d.dict() for d in divisions_list.result])
+    # TODO remove this when app lifespan works with pytest and httpx
+    p = pathlib.Path("hr_tmp")
+    p.mkdir(exist_ok=True)
     df.to_excel("hr_tmp/divisions.xlsx", index=False)
     return FileResponse("hr_tmp/divisions.xlsx", filename="divisions.xlsx")

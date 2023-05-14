@@ -1,4 +1,5 @@
 """Department api endpoints module."""
+import pathlib
 from typing import Annotated
 from uuid import UUID
 
@@ -155,6 +156,9 @@ async def download_excel(
     """Download departments as excel."""
     Authorize.jwt_required()
     department_list = await departments.read_many()
+    # TODO remove this when app lifespan works with pytest and httpx
+    p = pathlib.Path("hr_tmp")
+    p.mkdir(exist_ok=True)
     df = pd.DataFrame([d.dict() for d in department_list.result])
     df.to_excel("hr_tmp/departments.xlsx", index=False)
     return FileResponse("hr_tmp/departments.xlsx")
