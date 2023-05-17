@@ -1,11 +1,11 @@
 """Human resources application settings module."""
 import os
 import sys
-from typing import Union
+from urllib.parse import quote_plus
 
 import requests
 from dotenv import load_dotenv
-from pydantic import BaseSettings, PostgresDsn
+from pydantic import BaseSettings, validator
 from requests.exceptions import ConnectionError
 
 load_dotenv()
@@ -75,12 +75,19 @@ class Settings(BaseSettings):
     description: str
 
     # Database
-    async_db_connection_string: Union[PostgresDsn, str]
-    async_test_db_connection_string: Union[PostgresDsn, str]
     pg_user: str
     pg_password: str
     pg_server: str
     pg_db: str
+    pg_port: int
+    pg_test_db: str
+    pg_test_port: int
+
+    @validator("pg_user", "pg_password", "pg_db", "pg_test_db")
+    def url_encode(cls, v):
+        """Url quote strings."""
+        v = quote_plus(v)
+        return v
 
     class Config:
         """Further settings customization config class."""

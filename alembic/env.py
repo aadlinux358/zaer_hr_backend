@@ -71,21 +71,14 @@ def do_run_migrations(connection: Connection) -> None:
         context.run_migrations()
 
 
-# def get_url() -> str:
-#     user = os.getenv("POSTGRES_USER", "postgres")
-#     password = os.getenv("POSTGRES_PASSWORD", "")
-#     server = os.getenv("POSTGRES_SERVER", "db")
-#     db = os.getenv("POSTGRES_DB", "zaer-hr")
-#     return f"postgresql+asyncpg://{user}:{password}@{server}/{db}"
-
-
 def get_url() -> str:
     """Get database connection string."""
     user = settings.pg_user
     password = settings.pg_password
     server = settings.pg_server
     db = settings.pg_db
-    return f"postgresql+asyncpg://{user}:{password}@{server}/{db}"
+    port = settings.pg_port
+    return f"postgresql+asyncpg://{user}:{password}@{server}:{port}/{db}"
 
 
 async def run_migrations_online() -> None:
