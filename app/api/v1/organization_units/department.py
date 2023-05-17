@@ -145,6 +145,9 @@ async def download_csv(departments: DepartmentCRUDDep, Authorize: AuthJWTDep):
     Authorize.jwt_required()
     department_list = await departments.read_many_print_format()
     df = pd.DataFrame([d.dict() for d in department_list.result])
+    # TODO remove this when app lifespan works with pytest and httpx
+    p = pathlib.Path("hr_tmp")
+    p.mkdir(exist_ok=True)
     df.to_csv("hr_tmp/departments.csv", index=False)
     return FileResponse("hr_tmp/departments.csv")
 
