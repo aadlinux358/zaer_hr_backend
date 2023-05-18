@@ -75,7 +75,10 @@ async def initialize_related_tables(session: AsyncSession) -> dict[str, Any]:
     await session.refresh(nationality)
 
     educational_level = EducationalLevelDB(
-        level="10th", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+        level="10th",
+        level_order=10,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
     )
     session.add(educational_level)
     await session.commit()

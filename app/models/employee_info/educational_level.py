@@ -12,6 +12,7 @@ class EducationalLevelBase(SQLModel):
     """Educational level base model."""
 
     level: str = Field(nullable=False, unique=True, max_length=100, min_length=1)
+    level_order: int = Field(nullable=False, unique=True, ge=0)
 
 
 class EducationalLevelCreate(EducationalLevelBase):

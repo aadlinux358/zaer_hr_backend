@@ -19,13 +19,16 @@ async def test_can_create_educational_level(client: AsyncClient):
         f"/{ENDPOINT}",
         json={
             "level": "10th",
+            "level_order": 10,
         },
     )
 
     assert response.status_code == status.HTTP_201_CREATED, response.json()
-    assert response.json()["level"] == "10th"
-    assert response.json()["date_created"]
-    assert response.json()["date_modified"]
+    data = response.json()
+    assert data["level"] == "10th"
+    assert data["level_order"] == 10
+    assert data["date_created"]
+    assert data["date_modified"]
 
 
 @pytest.mark.asyncio
@@ -34,6 +37,7 @@ async def test_educational_level_levels_are_lower_cased(client: AsyncClient):
         f"/{ENDPOINT}",
         json={
             "level": "7th",
+            "level_order": 7,
         },
     )
 
@@ -46,7 +50,10 @@ async def test_can_not_create_duplicate_educational_level_level(
     client: AsyncClient, session: AsyncSession
 ):
     educational_level = EducationalLevelDB(
-        level="8th", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+        level="8th",
+        level_order=8,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
     )
     session.add(educational_level)
     await session.commit()
@@ -55,6 +62,7 @@ async def test_can_not_create_duplicate_educational_level_level(
         f"/{ENDPOINT}",
         json={
             "level": "8th",
+            "level_order": 8,
         },
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST, response.json()
@@ -68,16 +76,19 @@ async def test_can_get_educational_levels_list(
     educational_levels = [
         EducationalLevelDB(
             level="1st",
+            level_order=1,
             created_by=uuid.UUID(USER_ID),
             modified_by=uuid.UUID(USER_ID),
         ),
         EducationalLevelDB(
             level="2nd",
+            level_order=2,
             created_by=uuid.UUID(USER_ID),
             modified_by=uuid.UUID(USER_ID),
         ),
         EducationalLevelDB(
             level="3rd",
+            level_order=3,
             created_by=uuid.UUID(USER_ID),
             modified_by=uuid.UUID(USER_ID),
         ),
@@ -99,7 +110,10 @@ async def test_can_get_educational_level_by_id(
     client: AsyncClient, session: AsyncSession
 ):
     educational_level = EducationalLevelDB(
-        level="10th", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+        level="10th",
+        level_order=10,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
     )
     session.add(educational_level)
     await session.commit()
@@ -123,7 +137,10 @@ async def test_educational_level_not_found(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_can_update_educational_level(client: AsyncClient, session: AsyncSession):
     educational_level = EducationalLevelDB(
-        level="10th", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+        level="10th",
+        level_order=10,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
     )
     session.add(educational_level)
     await session.commit()
@@ -149,7 +166,10 @@ async def test_can_update_educational_level(client: AsyncClient, session: AsyncS
 @pytest.mark.asyncio
 async def test_delete_educational_level(client: AsyncClient, session: AsyncSession):
     educational_level = EducationalLevelDB(
-        level="10th", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+        level="10th",
+        level_order=10,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
     )
     session.add(educational_level)
     await session.commit()
