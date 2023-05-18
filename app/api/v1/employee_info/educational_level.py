@@ -98,7 +98,7 @@ async def updated_educational_level(
     )
     try:
         educational_level = await educational_levels.update_educational_level(
-        educational_level_uid, update_payload
+            educational_level_uid, update_payload
         )
     except IntegrityError:
         raise HTTPException(
