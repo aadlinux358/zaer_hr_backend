@@ -96,9 +96,15 @@ async def updated_educational_level(
     update_payload = EducationalLevelUpdate(
         **payload.dict(exclude_unset=True), modified_by=subject
     )
-    educational_level = await educational_levels.update_educational_level(
+    try:
+        educational_level = await educational_levels.update_educational_level(
         educational_level_uid, update_payload
-    )
+        )
+    except IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="duplicate educational level.",
+        )
     if educational_level is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="educational level not found."

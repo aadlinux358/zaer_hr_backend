@@ -26,12 +26,12 @@ class EducationalLevelUpdateBase(SQLModel):
     """Educational level update base model."""
 
     level: Optional[str]
+    level_order: Optional[int]
 
 
 class EducationalLevelUpdate(EducationalLevelUpdateBase):
     """Educational level update model."""
 
-    level: Optional[str]
     modified_by: UUID
 
 
