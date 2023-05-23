@@ -13,7 +13,7 @@ from app.models.employee_info.child import ChildDB
 from app.models.employee_info.employee import EmployeeDB
 from app.tests.test_employee_info.employee_related_data import initialize_related_tables
 
-ENDPOINT: Final = "children"
+ENDPOINT: Final = "/employee/children"
 USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
 EMPLOYEE_TEST_DATA: Final = {
     "first_name": "Semere",
@@ -55,8 +55,6 @@ async def test_create_child(client: AsyncClient, session: AsyncSession):
             "first_name": "SENAY",
             "gender": "m",
             "birth_date": "2015-03-07",
-            "created_by": USER_ID,
-            "modified_by": USER_ID,
         },
     )
 
@@ -65,6 +63,8 @@ async def test_create_child(client: AsyncClient, session: AsyncSession):
     assert response.json()["first_name"] == "senay"
     assert response.json()["gender"] == "m"
     assert response.json()["birth_date"] == "2015-03-07"
+    assert response.json()["created_by"] == USER_ID
+    assert response.json()["modified_by"] == USER_ID
 
 
 @pytest.mark.asyncio
@@ -99,8 +99,6 @@ async def test_duplicate_child(client: AsyncClient, session: AsyncSession):
         "first_name": "senay",
         "gender": "m",
         "birth_date": "2016-03-07",
-        "created_by": USER_ID,
-        "modified_by": USER_ID,
     }
     response = await client.post(f"{ENDPOINT}", json=child_payload)
 
@@ -230,10 +228,9 @@ async def test_update_child(client: AsyncClient, session: AsyncSession):
     await session.commit()
     await session.refresh(child)
 
-    new_user = uuid.uuid4()
+    uuid.uuid4()
     payload = {
         "first_name": "TEMESGEN",
-        "modified_by": str(new_user),
     }
 
     response = await client.patch(f"{ENDPOINT}/{child.uid}", json=payload)
@@ -241,7 +238,7 @@ async def test_update_child(client: AsyncClient, session: AsyncSession):
     assert response.status_code == status.HTTP_200_OK, response.json()
     assert response.json()["uid"] == str(child.uid)
     assert response.json()["first_name"] == "temesgen"
-    assert response.json()["modified_by"] == str(new_user)
+    assert response.json()["modified_by"] == USER_ID
 
 
 @pytest.mark.asyncio

@@ -30,13 +30,18 @@ class ChildCreate(ChildBase):
     modified_by: UUID
 
 
-class ChildUpdate(SQLModel):
-    """Child update model."""
+class ChildUpdateBase(SQLModel):
+    """Child update base model."""
 
     parent_uid: Optional[UUID]
     first_name: Optional[str]
     gender: Optional[Gender]
     birth_date: Optional[date]
+
+
+class ChildUpdate(ChildUpdateBase):
+    """Child update model."""
+
     modified_by: UUID
 
 
