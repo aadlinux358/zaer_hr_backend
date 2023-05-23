@@ -12,7 +12,7 @@ from app.models.employee_info.address import AddressDB
 from app.models.employee_info.employee import EmployeeDB
 from app.tests.test_employee_info.employee_related_data import initialize_related_tables
 
-ENDPOINT: Final = "addresses"
+ENDPOINT: Final = "employee/addresses"
 USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
 EMPLOYEE_TEST_DATA: Final = {
     "first_name": "Semere",
@@ -53,8 +53,6 @@ async def test_create_address(client: AsyncClient, session: AsyncSession):
             "employee_uid": str(employee.uid),
             "city": "ASMARA",
             "district": "GEZABANDA",
-            "created_by": USER_ID,
-            "modified_by": USER_ID,
         },
     )
 
@@ -62,6 +60,8 @@ async def test_create_address(client: AsyncClient, session: AsyncSession):
     assert response.json()["employee_uid"] == str(employee.uid)
     assert response.json()["city"] == "asmara"
     assert response.json()["district"] == "gezabanda"
+    assert response.json()["created_by"] == USER_ID
+    assert response.json()["modified_by"] == USER_ID
 
 
 @pytest.mark.asyncio
@@ -134,13 +134,14 @@ async def test_update_address(client: AsyncClient, session: AsyncSession):
 
     response = await client.patch(
         f"{ENDPOINT}/{address.uid}",
-        json={"city": "KEREN", "district": "SHEFSHEFIT", "modified_by": USER_ID},
+        json={"city": "KEREN", "district": "SHEFSHEFIT"},
     )
 
     assert response.status_code == status.HTTP_200_OK, response.json()
     assert response.json()["uid"] == str(address.uid)
     assert response.json()["city"] == "keren"
     assert response.json()["district"] == "shefshefit"
+    assert response.json()["modified_by"] == USER_ID
 
 
 @pytest.mark.asyncio

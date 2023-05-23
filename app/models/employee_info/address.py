@@ -23,11 +23,16 @@ class AddressCreate(AddressBase):
     modified_by: UUID
 
 
-class AddressUpdate(SQLModel):
-    """Address update model."""
+class AddressUpdateBase(SQLModel):
+    """Address update base model."""
 
     city: Optional[str]
     district: Optional[str]
+
+
+class AddressUpdate(AddressUpdateBase):
+    """Address update model."""
+
     modified_by: UUID
 
 
