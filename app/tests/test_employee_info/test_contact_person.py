@@ -12,7 +12,7 @@ from app.models.employee_info.contact_person import ContactPersonDB
 from app.models.employee_info.employee import EmployeeDB
 from app.tests.test_employee_info.employee_related_data import initialize_related_tables
 
-ENDPOINT: Final = "contact-person"
+ENDPOINT: Final = "employee/contact-persons"
 USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
 EMPLOYEE_TEST_DATA: Final = {
     "first_name": "Semere",
@@ -55,8 +55,6 @@ async def test_create_contact_person(client: AsyncClient, session: AsyncSession)
             "last_name": "TESFAY",
             "phone_number": "07999888",
             "relationship_to_employee": "brother",
-            "created_by": USER_ID,
-            "modified_by": USER_ID,
         },
     )
 
@@ -66,6 +64,8 @@ async def test_create_contact_person(client: AsyncClient, session: AsyncSession)
     assert response.json()["last_name"] == "tesfay"
     assert response.json()["phone_number"] == "07999888"
     assert response.json()["relationship_to_employee"] == "brother"
+    assert response.json()["created_by"] == USER_ID
+    assert response.json()["modified_by"] == USER_ID
 
 
 @pytest.mark.asyncio
@@ -144,13 +144,17 @@ async def test_update_contact_person(client: AsyncClient, session: AsyncSession)
 
     response = await client.patch(
         f"{ENDPOINT}/{contact_person.uid}",
-        json={"first_name": "AMILAK", "last_name": "mihretab", "modified_by": USER_ID},
+        json={
+            "first_name": "AMILAK",
+            "last_name": "mihretab",
+        },
     )
 
     assert response.status_code == status.HTTP_200_OK, response.json()
     assert response.json()["uid"] == str(contact_person.uid)
     assert response.json()["first_name"] == "amilak"
     assert response.json()["last_name"] == "mihretab"
+    assert response.json()["modified_by"] == USER_ID
 
 
 @pytest.mark.asyncio

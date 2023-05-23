@@ -25,13 +25,18 @@ class ContactPersonCreate(ContactPersonBase):
     modified_by: UUID
 
 
-class ContactPersonUpdate(SQLModel):
-    """Contact person update model."""
+class ContactPersonUpdateBase(SQLModel):
+    """Contact person update base model."""
 
     first_name: Optional[str]
     last_name: Optional[str]
     phone_number: Optional[str]
     relationship_to_employee: Optional[str]
+
+
+class ContactPersonUpdate(ContactPersonUpdateBase):
+    """Contact person update model."""
+
     modified_by: UUID
 
 

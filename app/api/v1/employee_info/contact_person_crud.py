@@ -37,7 +37,8 @@ class ContactPersonCRUD:
         """Fetch all contact person records."""
         statement = select(ContactPersonDB)
         result = await self.session.exec(statement)  # type: ignore
-        return ContactPersonReadMany(count=len(result.all()), result=result.all())
+        all_result = result.all()
+        return ContactPersonReadMany(count=len(all_result), result=all_result)
 
     async def read_by_uid(self, contact_person_uid: UUID) -> Optional[ContactPersonDB]:
         """Read contact person by uid."""
