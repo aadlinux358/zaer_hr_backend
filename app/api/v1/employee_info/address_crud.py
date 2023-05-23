@@ -35,7 +35,8 @@ class AddressCRUD:
         """Fetch all address records."""
         statement = select(AddressDB)
         result = await self.session.exec(statement)  # type: ignore
-        return AddressReadMany(count=len(result.all()), result=result.all())
+        all_result = result.all()
+        return AddressReadMany(count=len(all_result), result=all_result)
 
     async def read_by_uid(self, address_uid: UUID) -> Optional[AddressDB]:
         """Read address by uid."""
