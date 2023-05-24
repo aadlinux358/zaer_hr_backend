@@ -46,16 +46,16 @@ async def create_child(
     return child
 
 
-@router.get("", response_model=ChildReadMany)
-async def read_many(children: ChildCRUDDep, Authorize: AuthJWTDep):
+@router.get("/employee-id/{employee_uid}", response_model=ChildReadMany)
+async def read_many(employee_uid: UUID, children: ChildCRUDDep, Authorize: AuthJWTDep):
     """Read many children."""
     Authorize.jwt_required()
-    child_list = await children.read_many()
+    child_list = await children.read_many(employee_uid)
 
     return child_list
 
 
-@router.get("/{child_uid}", response_model=ChildRead)
+@router.get("/child-id/{child_uid}", response_model=ChildRead)
 async def read_by_uid(child_uid: UUID, children: ChildCRUDDep, Authorize: AuthJWTDep):
     """Read child by uid."""
     Authorize.jwt_required()

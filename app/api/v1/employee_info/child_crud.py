@@ -31,9 +31,9 @@ class ChildCRUD:
 
         return child
 
-    async def read_many(self) -> ChildReadMany:
+    async def read_many(self, employee_uid: UUID) -> ChildReadMany:
         """Fetch all child records."""
-        statement = select(ChildDB)
+        statement = select(ChildDB).where(ChildDB.parent_uid == employee_uid)
         result = await self.session.exec(statement)  # type: ignore
         all_result = result.all()
         return ChildReadMany(count=len(all_result), result=all_result)

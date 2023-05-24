@@ -107,9 +107,11 @@ async def test_duplicate_child(client: AsyncClient, session: AsyncSession):
 
 
 @pytest.mark.asyncio
-async def test_can_get_children(client: AsyncClient, session: AsyncSession):
+async def test_can_get_employee_children(client: AsyncClient, session: AsyncSession):
     related = await initialize_related_tables(session)
     values = copy.deepcopy(EMPLOYEE_TEST_DATA)
+    other_values = copy.deepcopy(EMPLOYEE_TEST_DATA)
+    other_values.update(phone_number="22328832", national_id="9923322")
     employee = EmployeeDB(
         **values,
         designation_uid=related["designation"].uid,
@@ -117,9 +119,18 @@ async def test_can_get_children(client: AsyncClient, session: AsyncSession):
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
     )
+    other_employee = EmployeeDB(
+        **other_values,
+        designation_uid=related["designation"].uid,
+        nationality_uid=related["nationality"].uid,
+        unit_uid=related["unit"].uid,
+        educational_level_uid=related["educational_level"].uid,
+    )
     session.add(employee)
+    session.add(other_employee)
     await session.commit()
     await session.refresh(employee)
+    await session.refresh(other_employee)
 
     children = [
         ChildDB(
@@ -146,12 +157,20 @@ async def test_can_get_children(client: AsyncClient, session: AsyncSession):
             created_by=uuid.UUID(USER_ID),
             modified_by=uuid.UUID(USER_ID),
         ),
+        ChildDB(
+            parent_uid=other_employee.uid,
+            first_name="zemen",
+            birth_date=date(2019, 9, 21),
+            gender="f",
+            created_by=uuid.UUID(USER_ID),
+            modified_by=uuid.UUID(USER_ID),
+        ),
     ]
     for child in children:
         session.add(child)
     await session.commit()
 
-    response = await client.get(f"{ENDPOINT}")
+    response = await client.get(f"{ENDPOINT}/employee-id/{employee.uid}")
 
     assert response.status_code == status.HTTP_200_OK, response.json()
     assert response.json()["count"] == 3
@@ -186,7 +205,7 @@ async def test_can_get_child_by_uid(client: AsyncClient, session: AsyncSession):
     await session.commit()
     await session.refresh(child)
 
-    response = await client.get(f"{ENDPOINT}/{child.uid}")
+    response = await client.get(f"{ENDPOINT}/child-id/{child.uid}")
 
     assert response.status_code == status.HTTP_200_OK, response.json()
     assert response.json()["uid"] == str(child.uid)
@@ -195,7 +214,7 @@ async def test_can_get_child_by_uid(client: AsyncClient, session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_child_not_found(client: AsyncClient, session: AsyncSession):
-    response = await client.get(f"{ENDPOINT}/{uuid.uuid4()}")
+    response = await client.get(f"{ENDPOINT}/child-id/{uuid.uuid4()}")
 
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.json()
     assert response.json()["detail"] == "child not found."
