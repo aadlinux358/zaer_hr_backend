@@ -33,7 +33,14 @@ class ContactPersonCRUD:
 
         return contact_person
 
-    async def read_many(self, employee_uid: UUID) -> ContactPersonReadMany:
+    async def read_many(self) -> ContactPersonReadMany:
+        """Fetch all contact person records."""
+        statement = select(ContactPersonDB)
+        result = await self.session.exec(statement)  # type: ignore
+        all_result = result.all()
+        return ContactPersonReadMany(count=len(all_result), result=all_result)
+
+    async def read_many_by_employee(self, employee_uid: UUID) -> ContactPersonReadMany:
         """Fetch all contact person records."""
         statement = select(ContactPersonDB).where(
             ContactPersonDB.employee_uid == employee_uid

@@ -31,8 +31,15 @@ class AddressCRUD:
 
         return address
 
-    async def read_many(self, employee_uid: UUID) -> AddressReadMany:
+    async def read_many(self) -> AddressReadMany:
         """Fetch all address records."""
+        statement = select(AddressDB)
+        result = await self.session.exec(statement)  # type: ignore
+        all_result = result.all()
+        return AddressReadMany(count=len(all_result), result=all_result)
+
+    async def read_many_by_employee(self, employee_uid: UUID) -> AddressReadMany:
+        """Fetch all address records of an employee."""
         statement = select(AddressDB).where(AddressDB.employee_uid == employee_uid)
         result = await self.session.exec(statement)  # type: ignore
         all_result = result.all()
