@@ -90,7 +90,7 @@ async def test_can_get_address_by_uid(client: AsyncClient, session: AsyncSession
     await session.commit()
     await session.refresh(address)
 
-    response = await client.get(f"{ENDPOINT}/{address.uid}")
+    response = await client.get(f"{ENDPOINT}/address-id/{address.uid}")
 
     assert response.status_code == status.HTTP_200_OK, response.json()
     assert response.json()["uid"] == str(address.uid)
@@ -100,7 +100,7 @@ async def test_can_get_address_by_uid(client: AsyncClient, session: AsyncSession
 
 @pytest.mark.asyncio
 async def test_address_not_found(client: AsyncClient, session: AsyncSession):
-    response = await client.get(f"{ENDPOINT}/{uuid.uuid4()}")
+    response = await client.get(f"{ENDPOINT}/address-id/{uuid.uuid4()}")
 
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.json()
     assert response.json()["detail"] == "address not found."
