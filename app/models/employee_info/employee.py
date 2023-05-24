@@ -5,6 +5,7 @@ from enum import Enum
 from typing import Callable, ClassVar, Optional, Union
 from uuid import UUID
 
+from pydantic import validator
 from sqlmodel import CheckConstraint, Field, Identity, SQLModel
 
 from app.models.shared.base import Base
@@ -105,6 +106,13 @@ class EmployeeBase(SQLModel):
         ),
     )
 
+    @validator("phone_number")
+    def phone_number_must_contain_only_digits(cls, v):
+        """Validate phone number string."""
+        if not v.isdigit():
+            raise ValueError("phone must contain only digits")
+        return v
+
 
 class EmployeeCreate(EmployeeBase):
     """Employee create model."""
@@ -136,6 +144,13 @@ class EmployeeUpdateBase(SQLModel):
     national_id: Optional[str]
     contract_type: Optional[ContractType]
     national_service: Optional[NationalService]
+
+    @validator("phone_number")
+    def phone_number_must_contain_only_digits(cls, v):
+        """Validate phone number string."""
+        if not v.isdigit():
+            raise ValueError("phone must contain only digits")
+        return v
 
 
 class EmployeeUpdate(EmployeeUpdateBase):

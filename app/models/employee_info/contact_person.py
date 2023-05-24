@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Callable, ClassVar, Optional, Union
 from uuid import UUID
 
+from pydantic import validator
 from sqlmodel import Field, SQLModel
 
 from app.models.shared.base import Base
@@ -16,6 +17,13 @@ class ContactPersonBase(SQLModel):
     last_name: str = Field(nullable=False, max_length=100, min_length=1)
     phone_number: str = Field(nullable=False, unique=True, max_length=100, min_length=1)
     relationship_to_employee: str = Field(nullable=False, max_length=100, min_length=1)
+
+    @validator("phone_number")
+    def phone_number_must_contain_only_digits(cls, v):
+        """Validate phone number string."""
+        if not v.isdigit():
+            raise ValueError("phone must contain only digits")
+        return v
 
 
 class ContactPersonCreate(ContactPersonBase):
@@ -32,6 +40,13 @@ class ContactPersonUpdateBase(SQLModel):
     last_name: Optional[str]
     phone_number: Optional[str]
     relationship_to_employee: Optional[str]
+
+    @validator("phone_number")
+    def phone_number_must_contain_only_digits(cls, v):
+        """Validate phone number string."""
+        if not v.isdigit():
+            raise ValueError("phone must contain only digits")
+        return v
 
 
 class ContactPersonUpdate(ContactPersonUpdateBase):
