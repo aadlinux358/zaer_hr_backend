@@ -48,7 +48,7 @@ async def create_address(
 
 @router.get("", response_model=AddressReadMany)
 async def read_many(
-    employee_uid: UUID, addresses: AddressCRUDDep, Authorize: AuthJWTDep
+    addresses: AddressCRUDDep, Authorize: AuthJWTDep
 ):
     """Read many addresses."""
     Authorize.jwt_required()
