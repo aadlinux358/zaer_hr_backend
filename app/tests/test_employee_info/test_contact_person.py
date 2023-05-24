@@ -98,7 +98,7 @@ async def test_can_get_contact_person_by_uid(
     await session.commit()
     await session.refresh(contact_person)
 
-    response = await client.get(f"{ENDPOINT}/{contact_person.uid}")
+    response = await client.get(f"{ENDPOINT}/contact-id/{contact_person.uid}")
 
     assert response.status_code == status.HTTP_200_OK, response.json()
     assert response.json()["uid"] == str(contact_person.uid)
@@ -108,7 +108,7 @@ async def test_can_get_contact_person_by_uid(
 
 @pytest.mark.asyncio
 async def test_contact_person_not_found(client: AsyncClient, session: AsyncSession):
-    response = await client.get(f"{ENDPOINT}/{uuid.uuid4()}")
+    response = await client.get(f"{ENDPOINT}/contact-id/{uuid.uuid4()}")
 
     assert response.status_code == status.HTTP_404_NOT_FOUND, response.json()
     assert response.json()["detail"] == "contact person not found."

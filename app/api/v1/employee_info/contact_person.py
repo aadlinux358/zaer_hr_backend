@@ -50,16 +50,18 @@ async def create_contact_person(
     return contact_person
 
 
-@router.get("", response_model=ContactPersonReadMany)
-async def read_many(contact_persons: ContactPersonCRUDDep, Authorize: AuthJWTDep):
+@router.get("/employee-id/{employee_uid}", response_model=ContactPersonReadMany)
+async def read_many(
+    employee_uid: UUID, contact_persons: ContactPersonCRUDDep, Authorize: AuthJWTDep
+):
     """Read many contact persons."""
     Authorize.jwt_required()
-    contact_person_list = await contact_persons.read_many()
+    contact_person_list = await contact_persons.read_many(employee_uid)
 
     return contact_person_list
 
 
-@router.get("/{contact_person_uid}", response_model=ContactPersonRead)
+@router.get("/contact-id/{contact_person_uid}", response_model=ContactPersonRead)
 async def read_by_uid(
     contact_person_uid: UUID,
     contact_persons: ContactPersonCRUDDep,
