@@ -189,6 +189,7 @@ async def test_can_update_employee(client: AsyncClient, session: AsyncSession):
     assert response.json()["first_name"] == "john"
     assert response.json()["phone_number"] == "07222222"
 
+
 @pytest.mark.asyncio
 async def test_can_deactivate_employee(client: AsyncClient, session: AsyncSession):
     related = await initialize_related_tables(session)
@@ -210,13 +211,13 @@ async def test_can_deactivate_employee(client: AsyncClient, session: AsyncSessio
     await session.refresh(employee)
 
     assert response.status_code == status.HTTP_204_NO_CONTENT
-    assert employee.is_active == False
+    assert employee.is_active is False
+
 
 @pytest.mark.asyncio
 async def test_can_not_deactivate_already_deactivated_employee(
-        client: AsyncClient,
-        session: AsyncSession
-        ):
+    client: AsyncClient, session: AsyncSession
+):
     related = await initialize_related_tables(session)
     values = copy.deepcopy(EMPLOYEE_TEST_DATA)
     values.update(is_active=False)
@@ -237,8 +238,9 @@ async def test_can_not_deactivate_already_deactivated_employee(
     await session.refresh(employee)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json()["detail"] == 'employee is already deactivated'
-    assert employee.is_active == False
+    assert response.json()["detail"] == "employee is already deactivated"
+    assert employee.is_active is False
+
 
 @pytest.mark.asyncio
 async def test_can_activate_employee(client: AsyncClient, session: AsyncSession):
@@ -261,4 +263,4 @@ async def test_can_activate_employee(client: AsyncClient, session: AsyncSession)
     response = await client.post(f"{ENDPOINT}/activate/{employee.uid}")
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert response.json()["is_active"] == True
+    assert response.json()["is_active"] is True
