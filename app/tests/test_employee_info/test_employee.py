@@ -246,7 +246,7 @@ async def test_can_not_deactivate_already_deactivated_employee(
 async def test_can_activate_employee(client: AsyncClient, session: AsyncSession):
     related = await initialize_related_tables(session)
     values = copy.deepcopy(EMPLOYEE_TEST_DATA)
-    values.update(is_active=False)
+    values.update(is_active=False, is_terminated=True)
     employee = EmployeeDB(
         **values,
         designation_uid=related["designation"].uid,
@@ -264,3 +264,4 @@ async def test_can_activate_employee(client: AsyncClient, session: AsyncSession)
 
     assert response.status_code == status.HTTP_201_CREATED
     assert response.json()["is_active"] is True
+    assert response.json()["is_terminated"] is False

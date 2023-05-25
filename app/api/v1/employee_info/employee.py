@@ -151,7 +151,7 @@ async def activate_employee(
         )
     employee = await employees.update_employee(
         employee_uid=employee_uid,
-        payload=EmployeeUpdate(is_active=True, modified_by=subject),
+        payload=EmployeeUpdate(is_active=True, is_terminated=False, modified_by=subject),
     )
     if employee is None:
         raise HTTPException(
