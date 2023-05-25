@@ -61,6 +61,7 @@ class EmployeeBase(SQLModel):
     designation_uid: UUID = Field(nullable=False, foreign_key="designation.uid")
     unit_uid: UUID
     is_active: bool = Field(default=True, nullable=False)
+    is_terminated: bool = Field(default=False, nullable=False)
     nationality_uid: UUID = Field(nullable=False, foreign_key="nationality.uid")
     birth_place: str = Field(
         nullable=False,
@@ -134,6 +135,7 @@ class EmployeeUpdateBase(SQLModel):
     designation_uid: Optional[UUID]
     unit_uid: Optional[UUID]
     is_active: Optional[bool]
+    is_terminated: Optional[bool]
     nationality_uid: Optional[UUID]
     birth_place: Optional[str]
     mother_first_name: Optional[str]
