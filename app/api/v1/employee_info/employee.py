@@ -93,3 +93,58 @@ async def update_employee(
             status_code=status.HTTP_404_NOT_FOUND, detail="employee not found."
         )
     return employee
+
+@router.delete("/deactivate/{employee_uid}", status_code=status.HTTP_204_NO_CONTENT)
+async def deactivate_employee(
+        employee_uid: UUID,
+        employees: EmployeeCRUDDep,
+        Authorize: AuthJWTDep
+        ):
+    """Deactivate employee, not delete it from db."""
+    Authorize.jwt_required()
+    user_claims = Authorize.get_raw_jwt()
+    await staff_user_or_error(user_claims=user_claims)
+    subject = UUID(Authorize.get_jwt_subject()) # type: ignore
+    # TODO: Log this action in to a db table
+    employee = await employees.read_by_uid(employee_uid=employee_uid)
+    if not employee.is_active:
+        raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail='employee is already deactivated'
+                )
+    employee = await employees.update_employee(
+            employee_uid=employee_uid,
+            payload=EmployeeUpdate(is_active=False, modified_by=subject)
+            )
+    if employee is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="employee not found."
+        )
+
+@router.post("/activate/{employee_uid}", response_model=EmployeeRead, status_code=status.HTTP_201_CREATED)
+async def activate_employee(
+        employee_uid: UUID,
+        employees: EmployeeCRUDDep,
+        Authorize: AuthJWTDep
+        ):
+    """Activate employee."""
+    Authorize.jwt_required()
+    user_claims = Authorize.get_raw_jwt()
+    await staff_user_or_error(user_claims=user_claims)
+    subject = UUID(Authorize.get_jwt_subject()) # type: ignore
+    # TODO: Log this action in to a db table
+    employee = await employees.read_by_uid(employee_uid=employee_uid)
+    if employee.is_active:
+        raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail='employee is already activated'
+                )
+    employee = await employees.update_employee(
+            employee_uid=employee_uid,
+            payload=EmployeeUpdate(is_active=True, modified_by=subject)
+            )
+    if employee is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="employee not found."
+        )
+    return employee

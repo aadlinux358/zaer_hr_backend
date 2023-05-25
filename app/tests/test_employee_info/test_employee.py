@@ -188,3 +188,77 @@ async def test_can_update_employee(client: AsyncClient, session: AsyncSession):
     assert response.json()["uid"] == str(employee.uid)
     assert response.json()["first_name"] == "john"
     assert response.json()["phone_number"] == "07222222"
+
+@pytest.mark.asyncio
+async def test_can_deactivate_employee(client: AsyncClient, session: AsyncSession):
+    related = await initialize_related_tables(session)
+    values = copy.deepcopy(EMPLOYEE_TEST_DATA)
+    employee = EmployeeDB(
+        **values,
+        designation_uid=related["designation"].uid,
+        nationality_uid=related["nationality"].uid,
+        unit_uid=related["unit"].uid,
+        educational_level_uid=related["educational_level"].uid,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
+    )
+    session.add(employee)
+    await session.commit()
+    await session.refresh(employee)
+
+    response = await client.delete(f"{ENDPOINT}/deactivate/{employee.uid}")
+    await session.refresh(employee)
+
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert employee.is_active == False
+
+@pytest.mark.asyncio
+async def test_can_not_deactivate_already_deactivated_employee(
+        client: AsyncClient,
+        session: AsyncSession
+        ):
+    related = await initialize_related_tables(session)
+    values = copy.deepcopy(EMPLOYEE_TEST_DATA)
+    values.update(is_active=False)
+    employee = EmployeeDB(
+        **values,
+        designation_uid=related["designation"].uid,
+        nationality_uid=related["nationality"].uid,
+        unit_uid=related["unit"].uid,
+        educational_level_uid=related["educational_level"].uid,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
+    )
+    session.add(employee)
+    await session.commit()
+    await session.refresh(employee)
+
+    response = await client.delete(f"{ENDPOINT}/deactivate/{employee.uid}")
+    await session.refresh(employee)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json()["detail"] == 'employee is already deactivated'
+    assert employee.is_active == False
+
+@pytest.mark.asyncio
+async def test_can_activate_employee(client: AsyncClient, session: AsyncSession):
+    related = await initialize_related_tables(session)
+    values = copy.deepcopy(EMPLOYEE_TEST_DATA)
+    values.update(is_active=False)
+    employee = EmployeeDB(
+        **values,
+        designation_uid=related["designation"].uid,
+        nationality_uid=related["nationality"].uid,
+        unit_uid=related["unit"].uid,
+        educational_level_uid=related["educational_level"].uid,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
+    )
+    session.add(employee)
+    await session.commit()
+    await session.refresh(employee)
+
+    response = await client.post(f"{ENDPOINT}/activate/{employee.uid}")
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert response.json()["is_active"] == True
