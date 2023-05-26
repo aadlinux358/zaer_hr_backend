@@ -87,6 +87,13 @@ async def update_employee(
     update_payload = EmployeeUpdate(
         **payload.dict(exclude_unset=True), modified_by=subject
     )
+    db_employee = await employees.read_by_uid(employee_uid)
+    if db_employee:
+        if db_employee.is_active is False:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="can not update inactive employee",
+            )
     employee = await employees.update_employee(employee_uid, update_payload)
     if employee is None:
         raise HTTPException(

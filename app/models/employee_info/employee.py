@@ -134,8 +134,6 @@ class EmployeeUpdateBase(SQLModel):
     current_hire_date: Optional[date]
     designation_uid: Optional[UUID]
     unit_uid: Optional[UUID]
-    is_active: Optional[bool]
-    is_terminated: Optional[bool]
     nationality_uid: Optional[UUID]
     birth_place: Optional[str]
     mother_first_name: Optional[str]
@@ -158,6 +156,8 @@ class EmployeeUpdateBase(SQLModel):
 class EmployeeUpdate(EmployeeUpdateBase):
     """Employee update model."""
 
+    is_active: Optional[bool]
+    is_terminated: Optional[bool]
     modified_by: UUID
 
 

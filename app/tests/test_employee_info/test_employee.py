@@ -191,6 +191,34 @@ async def test_can_update_employee(client: AsyncClient, session: AsyncSession):
 
 
 @pytest.mark.asyncio
+async def test_can_not_update_inactive_employee(
+    client: AsyncClient, session: AsyncSession
+):
+    related = await initialize_related_tables(session)
+    values = copy.deepcopy(EMPLOYEE_TEST_DATA)
+    values["is_active"] = False
+    employee = EmployeeDB(
+        **values,
+        designation_uid=related["designation"].uid,
+        nationality_uid=related["nationality"].uid,
+        unit_uid=related["unit"].uid,
+        educational_level_uid=related["educational_level"].uid,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
+    )
+    session.add(employee)
+    await session.commit()
+    await session.refresh(employee)
+
+    payload = {"first_name": "john", "phone_number": "07222222"}
+
+    response = await client.patch(f"{ENDPOINT}/{employee.uid}", json=payload)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST, response.json()
+    assert response.json()["detail"] == "can not update inactive employee"
+
+
+@pytest.mark.asyncio
 async def test_can_deactivate_employee(client: AsyncClient, session: AsyncSession):
     related = await initialize_related_tables(session)
     values = copy.deepcopy(EMPLOYEE_TEST_DATA)
