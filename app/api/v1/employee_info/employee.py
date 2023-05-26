@@ -95,7 +95,11 @@ async def update_employee(
     return employee
 
 
-@router.delete("/deactivate/{employee_uid}", status_code=status.HTTP_204_NO_CONTENT)
+@router.post(
+    "/deactivate/{employee_uid}",
+    response_model=EmployeeRead,
+    status_code=status.HTTP_201_CREATED,
+)
 async def deactivate_employee(
     employee_uid: UUID, employees: EmployeeCRUDDep, Authorize: AuthJWTDep
 ):
@@ -124,6 +128,8 @@ async def deactivate_employee(
             status_code=status.HTTP_404_NOT_FOUND, detail="employee not found."
         )
 
+    return employee
+
 
 @router.post(
     "/activate/{employee_uid}",
@@ -151,7 +157,9 @@ async def activate_employee(
         )
     employee = await employees.update_employee(
         employee_uid=employee_uid,
-        payload=EmployeeUpdate(is_active=True, is_terminated=False, modified_by=subject),
+        payload=EmployeeUpdate(
+            is_active=True, is_terminated=False, modified_by=subject
+        ),
     )
     if employee is None:
         raise HTTPException(

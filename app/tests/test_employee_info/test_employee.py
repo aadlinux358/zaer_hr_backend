@@ -207,10 +207,10 @@ async def test_can_deactivate_employee(client: AsyncClient, session: AsyncSessio
     await session.commit()
     await session.refresh(employee)
 
-    response = await client.delete(f"{ENDPOINT}/deactivate/{employee.uid}")
+    response = await client.post(f"{ENDPOINT}/deactivate/{employee.uid}")
     await session.refresh(employee)
 
-    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert response.status_code == status.HTTP_201_CREATED
     assert employee.is_active is False
 
 
@@ -234,7 +234,7 @@ async def test_can_not_deactivate_already_deactivated_employee(
     await session.commit()
     await session.refresh(employee)
 
-    response = await client.delete(f"{ENDPOINT}/deactivate/{employee.uid}")
+    response = await client.post(f"{ENDPOINT}/deactivate/{employee.uid}")
     await session.refresh(employee)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
