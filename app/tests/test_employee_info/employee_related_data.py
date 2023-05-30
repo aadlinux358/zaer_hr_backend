@@ -16,6 +16,23 @@ from app.models import (
 
 USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
 
+EMPLOYEE_TEST_DATA: Final = {
+    "first_name": "Semere",
+    "last_name": "Tewelde",
+    "grandfather_name": "Kidane",
+    "gender": "m",
+    "birth_date": "1980-02-22",
+    "current_salary": 3000,
+    "current_hire_date": "2015-04-21",
+    "birth_place": "asmara",
+    "mother_first_name": "abeba",
+    "mother_last_name": "mebrahtu",
+    "phone_number": "07112233",
+    "national_id": "2345677",
+    "created_by": USER_ID,
+    "modified_by": USER_ID,
+}
+
 
 async def initialize_related_tables(session: AsyncSession) -> dict[str, Any]:
     """Initialize employee table related tables."""
