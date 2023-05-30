@@ -12,23 +12,28 @@ class TerminationBase(SQLModel):
     """Termination base model."""
 
     employee_uid: UUID
-    hire_date: date = Field(nullable=False)
     termination_date: date = Field(nullable=False)
 
 
 class TerminationCreate(TerminationBase):
     """Termination create model."""
 
+    hire_date: date = Field(nullable=False)
     created_by: UUID
     modified_by: UUID
 
 
-class TerminationUpdate(SQLModel):
+class TerminationUpdateBase(SQLModel):
     """Termination update model."""
 
     employee_uid: Optional[UUID]
     hire_date: Optional[UUID]
-    termination_date: Optional[UUID]
+    termination_date: Optional[date]
+
+
+class TerminationUpdate(TerminationUpdateBase):
+    """Termination update model."""
+
     modified_by: UUID
 
 
@@ -41,12 +46,14 @@ class TerminationDB(Base, TerminationBase, table=True):
         UniqueConstraint("employee_uid", "termination_date"),
     )
     employee_uid: UUID = Field(nullable=False, foreign_key="employee.uid")
+    hire_date: date = Field(nullable=False)
 
 
 class TerminationRead(TerminationCreate):
     """Termination read one model."""
 
     uid: UUID
+    hire_date: date
     employee_uid: UUID
     date_created: datetime
     date_modified: datetime

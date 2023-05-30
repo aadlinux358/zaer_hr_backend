@@ -9,6 +9,7 @@ from app.api.v1.employee_info.educational_level import (
 )
 from app.api.v1.employee_info.employee import router as employee_router
 from app.api.v1.employee_info.nationalities import router as nationality_router
+from app.api.v1.employee_info.termination import router as termination_router
 from app.api.v1.organization_units.department import router as department_router
 from app.api.v1.organization_units.designation import router as designation_router
 from app.api.v1.organization_units.division import router as division_router
@@ -28,3 +29,4 @@ api_router.include_router(nationality_router)
 api_router.include_router(educational_level_router)
 api_router.include_router(address_router)
 api_router.include_router(contact_person_router)
+api_router.include_router(termination_router)

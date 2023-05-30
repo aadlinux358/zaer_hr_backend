@@ -8,6 +8,7 @@ from app.api.v1.employee_info.contact_person_crud import ContactPersonCRUD
 from app.api.v1.employee_info.educational_level_crud import EducationalLevelCRUD
 from app.api.v1.employee_info.employee_crud import EmployeeCRUD
 from app.api.v1.employee_info.nationalities_crud import NationalityCRUD
+from app.api.v1.employee_info.termination_crud import TerminationCRUD
 from app.core.db import get_async_session
 
 
@@ -51,3 +52,10 @@ async def get_contact_person_crud(
 ) -> ContactPersonCRUD:
     """Initialize contact person crud operations class."""
     return ContactPersonCRUD(session=session)
+
+
+async def get_termination_crud(
+    session: AsyncSession = Depends(get_async_session),
+) -> TerminationCRUD:
+    """Initialize termination crud operations class."""
+    return TerminationCRUD(session=session)
