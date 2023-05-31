@@ -13,6 +13,7 @@ from app.api.v1.employee_info.dependencies import (
 from app.api.v1.employee_info.employee_crud import EmployeeCRUD
 from app.api.v1.employee_info.termination_crud import TerminationCRUD
 from app.api.v1.utils import staff_user_or_error
+from app.models.employee_info.employee import EmployeeUpdate
 from app.models.employee_info.termination import (
     TerminationBase,
     TerminationCreate,
@@ -65,6 +66,10 @@ async def create_termination(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="duplicate or invalid field information.",
         )
+    employee_update = EmployeeUpdate(is_terminated=True, modified_by=user)
+    employee = await employees.update_employee(
+        employee_uid=employee.uid, payload=employee_update
+    )
     return termination
 
 

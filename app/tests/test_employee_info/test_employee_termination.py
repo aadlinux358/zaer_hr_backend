@@ -46,6 +46,7 @@ async def test_create_employee_termination(client: AsyncClient, session: AsyncSe
     await session.refresh(employee)
     assert response.status_code == status.HTTP_201_CREATED
     assert response.json()["hire_date"] == str(employee.current_hire_date)
+    assert employee.is_terminated is True
 
 
 @pytest.mark.asyncio
