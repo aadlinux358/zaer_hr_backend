@@ -31,8 +31,8 @@ def upgrade() -> None:
     sa.Column('hire_date', sa.Date(), nullable=False),
     sa.ForeignKeyConstraint(['employee_uid'], ['employee.uid'], ),
     sa.PrimaryKeyConstraint('uid'),
-    sa.UniqueConstraint('employee_uid', 'hire_date'),
-    sa.UniqueConstraint('employee_uid', 'termination_date')
+    sa.UniqueConstraint('employee_uid', 'hire_date', name='emp_hire'),
+    sa.UniqueConstraint('employee_uid', 'termination_date', name="emp_term")
     )
     op.create_index(op.f('ix_termination_uid'), 'termination', ['uid'], unique=True)
     # ### end Alembic commands ###
