@@ -16,30 +16,30 @@ USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
 
 @pytest.mark.asyncio
 async def test_create_section(client: AsyncClient, session: AsyncSession):
-    department = await create_test_model("department", session)
+    unit = await create_test_model("unit", session)
 
     response = await client.post(
         f"{ENDPOINT}",
         json={
             "name": "CuTTing",
-            "department_uid": str(department.uid),
+            "unit_uid": str(unit.uid),
         },
     )
 
     assert response.status_code == status.HTTP_201_CREATED, response.json()
     assert response.json()["name"] == "cutting"
-    assert response.json()["department_uid"] == str(department.uid)
+    assert response.json()["unit_uid"] == str(unit.uid)
 
 
 @pytest.mark.asyncio
 async def test_can_not_create_duplicate_section_name(
     client: AsyncClient, session: AsyncSession
 ):
-    department = await create_test_model("department", session)
+    unit = await create_test_model("unit", session)
 
     section = SectionDB(
         name="cutting",
-        department_uid=department.uid,
+        unit_uid=unit.uid,
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )
@@ -51,7 +51,7 @@ async def test_can_not_create_duplicate_section_name(
         f"{ENDPOINT}",
         json={
             "name": "cutting",
-            "department_uid": str(department.uid),
+            "unit_uid": str(unit.uid),
         },
     )
 
@@ -61,18 +61,18 @@ async def test_can_not_create_duplicate_section_name(
 
 @pytest.mark.asyncio
 async def test_can_get_section_list(client: AsyncClient, session: AsyncSession):
-    department = await create_test_model("department", session)
+    unit = await create_test_model("unit", session)
 
     sections = [
         SectionDB(
             name="cutting",
-            department_uid=department.uid,
+            unit_uid=unit.uid,
             created_by=uuid.UUID(USER_ID),
             modified_by=uuid.UUID(USER_ID),
         ),
         SectionDB(
             name="assembly line 1",
-            department_uid=department.uid,
+            unit_uid=unit.uid,
             created_by=uuid.UUID(USER_ID),
             modified_by=uuid.UUID(USER_ID),
         ),
@@ -91,11 +91,11 @@ async def test_can_get_section_list(client: AsyncClient, session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_can_get_section_by_uid(client: AsyncClient, session: AsyncSession):
-    department = await create_test_model("department", session)
+    unit = await create_test_model("unit", session)
 
     section = SectionDB(
         name="preparation 1",
-        department_uid=department.uid,
+        unit_uid=unit.uid,
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )
@@ -120,11 +120,11 @@ async def test_section_not_found(client: AsyncClient, session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_can_update_section(client: AsyncClient, session: AsyncSession):
-    department = await create_test_model("department", session)
+    unit = await create_test_model("unit", session)
 
     section = SectionDB(
         name="preparation 1",
-        department_uid=department.uid,
+        unit_uid=unit.uid,
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )
@@ -145,11 +145,11 @@ async def test_can_update_section(client: AsyncClient, session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_delete_section(client: AsyncClient, session: AsyncSession):
-    department = await create_test_model("department", session)
+    unit = await create_test_model("unit", session)
 
     section = SectionDB(
         name="preparation 1",
-        department_uid=department.uid,
+        unit_uid=unit.uid,
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )

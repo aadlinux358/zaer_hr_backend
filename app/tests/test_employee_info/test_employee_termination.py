@@ -29,7 +29,7 @@ async def test_create_employee_termination(client: AsyncClient, session: AsyncSe
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        unit_uid=related["unit"].uid,
+        section_uid=related["section"].uid,
         educational_level_uid=related["educational_level"].uid,
         country_uid=related["country"].uid,
     )
@@ -60,7 +60,7 @@ async def test_can_not_terminate_active_employee(
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        unit_uid=related["unit"].uid,
+        section_uid=related["section"].uid,
         educational_level_uid=related["educational_level"].uid,
         country_uid=related["country"].uid,
     )
@@ -89,7 +89,7 @@ async def test_can_get_terminiation_by_id(client: AsyncClient, session: AsyncSes
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        unit_uid=related["unit"].uid,
+        section_uid=related["section"].uid,
         educational_level_uid=related["educational_level"].uid,
         country_uid=related["country"].uid,
     )
@@ -122,7 +122,7 @@ async def test_termination_not_found(client: AsyncClient, session: AsyncSession)
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        unit_uid=related["unit"].uid,
+        section_uid=related["section"].uid,
         educational_level_uid=related["educational_level"].uid,
         country_uid=related["country"].uid,
     )
@@ -155,7 +155,7 @@ async def test_can_read_many_terminations(client: AsyncClient, session: AsyncSes
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        unit_uid=related["unit"].uid,
+        section_uid=related["section"].uid,
         educational_level_uid=related["educational_level"].uid,
         country_uid=related["country"].uid,
     )
@@ -189,7 +189,7 @@ async def test_can_update_termination(client: AsyncClient, session: AsyncSession
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        unit_uid=related["unit"].uid,
+        section_uid=related["section"].uid,
         educational_level_uid=related["educational_level"].uid,
         country_uid=related["country"].uid,
     )
@@ -226,7 +226,7 @@ async def test_can_delete_termination(client: AsyncClient, session: AsyncSession
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        unit_uid=related["unit"].uid,
+        section_uid=related["section"].uid,
         educational_level_uid=related["educational_level"].uid,
         country_uid=related["country"].uid,
     )

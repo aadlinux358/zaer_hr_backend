@@ -8,7 +8,7 @@ from sqlmodel import Field, Relationship, SQLModel, UniqueConstraint
 from app.models.shared.base import Base
 
 if TYPE_CHECKING:
-    from app.models import DivisionDB, SectionDB
+    from app.models import DivisionDB, UnitDB
 
 
 class DepartmentBase(SQLModel):
@@ -45,7 +45,7 @@ class DepartmentDB(Base, DepartmentBase, table=True):
     __table_args__ = (UniqueConstraint("division_uid", "name"),)
     division_uid: UUID = Field(foreign_key="division.uid")
     division: "DivisionDB" = Relationship(back_populates="departments")
-    sections: list["SectionDB"] = Relationship(back_populates="department")
+    units: list["UnitDB"] = Relationship(back_populates="department")
 
 
 class DepartmentRead(DepartmentCreate):

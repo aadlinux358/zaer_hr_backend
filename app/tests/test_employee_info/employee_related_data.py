@@ -56,25 +56,25 @@ async def initialize_related_tables(session: AsyncSession) -> dict[str, Any]:
     await session.commit()
     await session.refresh(department)
 
-    section = SectionDB(
-        name="section one",
-        department_uid=department.uid,
-        created_by=uuid.UUID(USER_ID),
-        modified_by=uuid.UUID(USER_ID),
-    )
-    session.add(section)
-    await session.commit()
-    await session.refresh(section)
-
     unit = UnitDB(
         name="unit one",
-        section_uid=section.uid,
+        department_uid=department.uid,
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )
     session.add(unit)
     await session.commit()
     await session.refresh(unit)
+
+    section = SectionDB(
+        name="section one",
+        unit_uid=unit.uid,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
+    )
+    session.add(section)
+    await session.commit()
+    await session.refresh(section)
 
     designation = DesignationDB(
         title="designation one",

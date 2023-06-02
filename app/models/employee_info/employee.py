@@ -59,7 +59,7 @@ class EmployeeBase(SQLModel):
     current_salary: Decimal = Field(nullable=False, ge=0.00, default_factory=Decimal)
     current_hire_date: date = Field(nullable=False)
     designation_uid: UUID = Field(nullable=False, foreign_key="designation.uid")
-    unit_uid: UUID
+    section_uid: UUID
     is_active: bool = Field(default=True, nullable=False)
     is_terminated: bool = Field(default=False, nullable=False)
     nationality_uid: UUID = Field(nullable=False, foreign_key="nationality.uid")
@@ -169,7 +169,7 @@ class EmployeeDB(Base, EmployeeBase, table=True):
     badge_number: int = Field(
         nullable=False, unique=True, index=True, sa_column_args=(Identity(always=True),)
     )
-    unit_uid: UUID = Field(nullable=False, foreign_key="unit.uid")
+    section_uid: UUID = Field(nullable=False, foreign_key="section.uid")
 
 
 class EmployeeRead(EmployeeCreate):

@@ -8,14 +8,14 @@ from sqlmodel import Field, Relationship, SQLModel, UniqueConstraint
 from app.models.shared.base import Base
 
 if TYPE_CHECKING:
-    from app.models import DepartmentDB, UnitDB
+    from app.models import UnitDB
 
 
 class SectionBase(SQLModel):
     """section base class containing shared attrs."""
 
     name: str = Field(nullable=False, max_length=100, min_length=1, index=True)
-    department_uid: UUID
+    unit_uid: UUID
 
 
 class SectionCreate(SectionBase):
@@ -29,7 +29,7 @@ class SectionUpdateBase(SQLModel):
     """Section update model for optional fields."""
 
     name: Optional[str]
-    department_uid: Optional[UUID]
+    unit_uid: Optional[UUID]
 
 
 class SectionUpdate(SectionUpdateBase):
@@ -42,10 +42,9 @@ class SectionDB(Base, SectionBase, table=True):
     """section model for database table."""
 
     __tablename__: ClassVar[Union[str, Callable[..., str]]] = "section"
-    __table_args__ = (UniqueConstraint("department_uid", "name"),)
-    department_uid: UUID = Field(foreign_key="department.uid")
-    department: "DepartmentDB" = Relationship(back_populates="sections")
-    units: list["UnitDB"] = Relationship(back_populates="section")
+    __table_args__ = (UniqueConstraint("unit_uid", "name"),)
+    unit_uid: UUID = Field(foreign_key="unit.uid")
+    unit: "UnitDB" = Relationship(back_populates="sections")
 
 
 class SectionRead(SectionCreate):

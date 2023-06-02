@@ -16,19 +16,19 @@ USER_ID: Final = "38eb651b-bd33-4f9a-beb2-0f9d52d7acc6"
 
 @pytest.mark.asyncio
 async def test_create_unit(client: AsyncClient, session: AsyncSession):
-    section = await create_test_model("section", session)
+    department = await create_test_model("department", session)
 
     response = await client.post(
         f"{ENDPOINT}",
         json={
             "name": "CuTTing",
-            "section_uid": str(section.uid),
+            "department_uid": str(department.uid),
         },
     )
 
     assert response.status_code == status.HTTP_201_CREATED, response.json()
     assert response.json()["name"] == "cutting"
-    assert response.json()["section_uid"] == str(section.uid)
+    assert response.json()["department_uid"] == str(department.uid)
     assert response.json()["modified_by"] == USER_ID
     assert response.json()["created_by"] == USER_ID
 
@@ -37,11 +37,11 @@ async def test_create_unit(client: AsyncClient, session: AsyncSession):
 async def test_can_not_create_duplicate_unit_name(
     client: AsyncClient, session: AsyncSession
 ):
-    section = await create_test_model("section", session)
+    department = await create_test_model("department", session)
 
     unit = UnitDB(
         name="unit one",
-        section_uid=section.uid,
+        department_uid=department.uid,
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )
@@ -53,7 +53,7 @@ async def test_can_not_create_duplicate_unit_name(
         f"{ENDPOINT}",
         json={
             "name": "unit one",
-            "section_uid": str(section.uid),
+            "department_uid": str(department.uid),
         },
     )
 
@@ -63,18 +63,18 @@ async def test_can_not_create_duplicate_unit_name(
 
 @pytest.mark.asyncio
 async def test_can_get_unit_list(client: AsyncClient, session: AsyncSession):
-    section = await create_test_model("section", session)
+    department = await create_test_model("department", session)
 
     units = [
         UnitDB(
             name="unit one",
-            section_uid=section.uid,
+            department_uid=department.uid,
             created_by=uuid.UUID(USER_ID),
             modified_by=uuid.UUID(USER_ID),
         ),
         UnitDB(
             name="unit two",
-            section_uid=section.uid,
+            department_uid=department.uid,
             created_by=uuid.UUID(USER_ID),
             modified_by=uuid.UUID(USER_ID),
         ),
@@ -93,11 +93,11 @@ async def test_can_get_unit_list(client: AsyncClient, session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_can_get_unit_by_uid(client: AsyncClient, session: AsyncSession):
-    section = await create_test_model("section", session)
+    department = await create_test_model("department", session)
 
     unit = UnitDB(
         name="unit one",
-        section_uid=section.uid,
+        department_uid=department.uid,
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )
@@ -122,11 +122,11 @@ async def test_unit_not_found(client: AsyncClient, session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_can_update_unit(client: AsyncClient, session: AsyncSession):
-    section = await create_test_model("section", session)
+    department = await create_test_model("department", session)
 
     unit = UnitDB(
         name="unit one",
-        section_uid=section.uid,
+        department_uid=department.uid,
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )
@@ -147,11 +147,11 @@ async def test_can_update_unit(client: AsyncClient, session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_delete_unit(client: AsyncClient, session: AsyncSession):
-    section = await create_test_model("section", session)
+    department = await create_test_model("department", session)
 
     unit = UnitDB(
         name="unit one",
-        section_uid=section.uid,
+        department_uid=department.uid,
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )

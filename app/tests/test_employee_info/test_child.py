@@ -28,7 +28,7 @@ async def test_create_child(client: AsyncClient, session: AsyncSession):
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        unit_uid=related["unit"].uid,
+        section_uid=related["section"].uid,
         educational_level_uid=related["educational_level"].uid,
         country_uid=related["country"].uid,
     )
@@ -63,7 +63,7 @@ async def test_duplicate_child(client: AsyncClient, session: AsyncSession):
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        unit_uid=related["unit"].uid,
+        section_uid=related["section"].uid,
         educational_level_uid=related["educational_level"].uid,
         country_uid=related["country"].uid,
     )
@@ -105,7 +105,7 @@ async def test_can_get_employee_children(client: AsyncClient, session: AsyncSess
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        unit_uid=related["unit"].uid,
+        section_uid=related["section"].uid,
         educational_level_uid=related["educational_level"].uid,
         country_uid=related["country"].uid,
     )
@@ -113,7 +113,7 @@ async def test_can_get_employee_children(client: AsyncClient, session: AsyncSess
         **other_values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        unit_uid=related["unit"].uid,
+        section_uid=related["section"].uid,
         educational_level_uid=related["educational_level"].uid,
         country_uid=related["country"].uid,
     )
@@ -177,7 +177,7 @@ async def test_can_get_child_by_uid(client: AsyncClient, session: AsyncSession):
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        unit_uid=related["unit"].uid,
+        section_uid=related["section"].uid,
         educational_level_uid=related["educational_level"].uid,
         country_uid=related["country"].uid,
     )
@@ -220,7 +220,7 @@ async def test_update_child(client: AsyncClient, session: AsyncSession):
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        unit_uid=related["unit"].uid,
+        section_uid=related["section"].uid,
         educational_level_uid=related["educational_level"].uid,
         country_uid=related["country"].uid,
     )
@@ -261,7 +261,7 @@ async def test_delete_child(client: AsyncClient, session: AsyncSession):
         **values,
         designation_uid=related["designation"].uid,
         nationality_uid=related["nationality"].uid,
-        unit_uid=related["unit"].uid,
+        section_uid=related["section"].uid,
         educational_level_uid=related["educational_level"].uid,
         country_uid=related["country"].uid,
     )
