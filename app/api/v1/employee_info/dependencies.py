@@ -5,6 +5,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.api.v1.employee_info.address_crud import AddressCRUD
 from app.api.v1.employee_info.child_crud import ChildCRUD
 from app.api.v1.employee_info.contact_person_crud import ContactPersonCRUD
+from app.api.v1.employee_info.country_crud import CountryCRUD
 from app.api.v1.employee_info.educational_level_crud import EducationalLevelCRUD
 from app.api.v1.employee_info.employee_crud import EmployeeCRUD
 from app.api.v1.employee_info.nationalities_crud import NationalityCRUD
@@ -31,6 +32,13 @@ async def get_nationality_crud(
 ) -> NationalityCRUD:
     """Initialize nationality crud operation class."""
     return NationalityCRUD(session=session)
+
+
+async def get_country_crud(
+    session: AsyncSession = Depends(get_async_session),
+) -> CountryCRUD:
+    """Initialize nationality crud operation class."""
+    return CountryCRUD(session=session)
 
 
 async def get_educational_level_crud(

@@ -29,6 +29,7 @@ async def test_create_address(client: AsyncClient, session: AsyncSession):
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
     )
     session.add(employee)
     await session.commit()
@@ -61,6 +62,7 @@ async def test_can_get_address_by_uid(client: AsyncClient, session: AsyncSession
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
     )
     session.add(employee)
     await session.commit()
@@ -103,6 +105,7 @@ async def test_update_address(client: AsyncClient, session: AsyncSession):
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
     )
     session.add(employee)
     await session.commit()
@@ -141,6 +144,7 @@ async def test_delete_address(client: AsyncClient, session: AsyncSession):
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
     )
     session.add(employee)
     await session.commit()

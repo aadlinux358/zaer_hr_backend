@@ -31,6 +31,7 @@ async def test_create_employee_termination(client: AsyncClient, session: AsyncSe
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
     )
     session.add(employee)
     await session.commit()
@@ -61,6 +62,7 @@ async def test_can_not_terminate_active_employee(
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
     )
     session.add(employee)
     await session.commit()
@@ -89,6 +91,7 @@ async def test_can_get_terminiation_by_id(client: AsyncClient, session: AsyncSes
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
     )
     session.add(employee)
     await session.commit()
@@ -121,6 +124,7 @@ async def test_termination_not_found(client: AsyncClient, session: AsyncSession)
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
     )
     session.add(employee)
     await session.commit()
@@ -153,6 +157,7 @@ async def test_can_read_many_terminations(client: AsyncClient, session: AsyncSes
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
     )
     session.add(employee)
     await session.commit()
@@ -186,6 +191,7 @@ async def test_can_update_termination(client: AsyncClient, session: AsyncSession
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
     )
     session.add(employee)
     await session.commit()
@@ -222,6 +228,7 @@ async def test_can_delete_termination(client: AsyncClient, session: AsyncSession
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
     )
     session.add(employee)
     await session.commit()

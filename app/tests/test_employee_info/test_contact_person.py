@@ -29,6 +29,7 @@ async def test_create_contact_person(client: AsyncClient, session: AsyncSession)
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
     )
     session.add(employee)
     await session.commit()
@@ -67,6 +68,7 @@ async def test_can_get_contact_person_by_uid(
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
     )
     session.add(employee)
     await session.commit()
@@ -111,6 +113,7 @@ async def test_update_contact_person(client: AsyncClient, session: AsyncSession)
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
     )
     session.add(employee)
     await session.commit()
@@ -154,6 +157,7 @@ async def test_delete_contact_person(client: AsyncClient, session: AsyncSession)
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
     )
     session.add(employee)
     await session.commit()

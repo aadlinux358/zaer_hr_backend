@@ -63,6 +63,7 @@ class EmployeeBase(SQLModel):
     is_active: bool = Field(default=True, nullable=False)
     is_terminated: bool = Field(default=False, nullable=False)
     nationality_uid: UUID = Field(nullable=False, foreign_key="nationality.uid")
+    country_uid: UUID = Field(nullable=False, foreign_key="country.uid")
     birth_place: str = Field(
         nullable=False,
         max_length=100,

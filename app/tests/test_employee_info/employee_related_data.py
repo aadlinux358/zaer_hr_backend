@@ -5,6 +5,7 @@ from typing import Any, Final
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models import (
+    CountryDB,
     DepartmentDB,
     DesignationDB,
     DivisionDB,
@@ -91,6 +92,13 @@ async def initialize_related_tables(session: AsyncSession) -> dict[str, Any]:
     await session.commit()
     await session.refresh(nationality)
 
+    country = CountryDB(
+        name="eritrea", created_by=uuid.UUID(USER_ID), modified_by=uuid.UUID(USER_ID)
+    )
+    session.add(country)
+    await session.commit()
+    await session.refresh(country)
+
     educational_level = EducationalLevelDB(
         level="10th",
         level_order=10,
@@ -108,5 +116,6 @@ async def initialize_related_tables(session: AsyncSession) -> dict[str, Any]:
         "unit": unit,
         "designation": designation,
         "nationality": nationality,
+        "country": country,
         "educational_level": educational_level,
     }

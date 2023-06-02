@@ -39,6 +39,7 @@ async def test_create_employee(client: AsyncClient, session: AsyncSession):
         nationality_uid=str(related["nationality"].uid),
         unit_uid=str(related["unit"].uid),
         educational_level_uid=str(related["educational_level"].uid),
+        country_uid=str(related["country"].uid),
     )
     response = await client.post(f"/{ENDPOINT}", json=payload)
 
@@ -61,6 +62,7 @@ async def test_duplicate_violation(client: AsyncClient, session: AsyncSession):
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )
@@ -73,6 +75,7 @@ async def test_duplicate_violation(client: AsyncClient, session: AsyncSession):
         nationality_uid=str(related["nationality"].uid),
         unit_uid=str(related["unit"].uid),
         educational_level_uid=str(related["educational_level"].uid),
+        country_uid=str(related["country"].uid),
     )
     response = await client.post(f"/{ENDPOINT}", json=payload)
 
@@ -99,6 +102,7 @@ async def test_get_employees_list(client: AsyncClient, session: AsyncSession):
             nationality_uid=related["nationality"].uid,
             unit_uid=related["unit"].uid,
             educational_level_uid=related["educational_level"].uid,
+            country_uid=related["country"].uid,
             created_by=uuid.UUID(USER_ID),
             modified_by=uuid.UUID(USER_ID),
         ),
@@ -108,6 +112,7 @@ async def test_get_employees_list(client: AsyncClient, session: AsyncSession):
             nationality_uid=related["nationality"].uid,
             unit_uid=related["unit"].uid,
             educational_level_uid=related["educational_level"].uid,
+            country_uid=related["country"].uid,
             created_by=uuid.UUID(USER_ID),
             modified_by=uuid.UUID(USER_ID),
         ),
@@ -117,6 +122,7 @@ async def test_get_employees_list(client: AsyncClient, session: AsyncSession):
             nationality_uid=related["nationality"].uid,
             unit_uid=related["unit"].uid,
             educational_level_uid=related["educational_level"].uid,
+            country_uid=related["country"].uid,
             created_by=uuid.UUID(USER_ID),
             modified_by=uuid.UUID(USER_ID),
         ),
@@ -143,6 +149,7 @@ async def test_get_employee_by_uid(client: AsyncClient, session: AsyncSession):
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )
@@ -173,6 +180,7 @@ async def test_can_update_employee(client: AsyncClient, session: AsyncSession):
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )
@@ -203,6 +211,7 @@ async def test_can_not_update_inactive_employee(
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )
@@ -228,6 +237,7 @@ async def test_can_deactivate_employee(client: AsyncClient, session: AsyncSessio
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )
@@ -255,6 +265,7 @@ async def test_can_not_deactivate_already_deactivated_employee(
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )
@@ -281,6 +292,7 @@ async def test_can_activate_employee(client: AsyncClient, session: AsyncSession)
         nationality_uid=related["nationality"].uid,
         unit_uid=related["unit"].uid,
         educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
         created_by=uuid.UUID(USER_ID),
         modified_by=uuid.UUID(USER_ID),
     )

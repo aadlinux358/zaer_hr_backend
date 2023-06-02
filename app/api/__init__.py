@@ -4,6 +4,7 @@ from fastapi import APIRouter
 from app.api.v1.employee_info.address import router as address_router
 from app.api.v1.employee_info.child import router as child_router
 from app.api.v1.employee_info.contact_person import router as contact_person_router
+from app.api.v1.employee_info.country import router as country_router
 from app.api.v1.employee_info.educational_level import (
     router as educational_level_router,
 )
@@ -26,6 +27,7 @@ api_router.include_router(designation_router)
 api_router.include_router(employee_router)
 api_router.include_router(child_router)
 api_router.include_router(nationality_router)
+api_router.include_router(country_router)
 api_router.include_router(educational_level_router)
 api_router.include_router(address_router)
 api_router.include_router(contact_person_router)
