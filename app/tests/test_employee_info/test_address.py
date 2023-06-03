@@ -48,6 +48,8 @@ async def test_create_address(client: AsyncClient, session: AsyncSession):
     assert response.json()["employee_uid"] == str(employee.uid)
     assert response.json()["city"] == "asmara"
     assert response.json()["district"] == "gezabanda"
+    assert response.json()["street"] == ""  # default value
+    assert response.json()["house_number"] == 0  # default value
     assert response.json()["created_by"] == USER_ID
     assert response.json()["modified_by"] == USER_ID
 
@@ -124,13 +126,20 @@ async def test_update_address(client: AsyncClient, session: AsyncSession):
 
     response = await client.patch(
         f"{ENDPOINT}/{address.uid}",
-        json={"city": "KEREN", "district": "SHEFSHEFIT"},
+        json={
+            "city": "KEREN",
+            "district": "SHEFSHEFIT",
+            "street": "HAm",
+            "house_number": 20,
+        },
     )
 
     assert response.status_code == status.HTTP_200_OK, response.json()
     assert response.json()["uid"] == str(address.uid)
     assert response.json()["city"] == "keren"
     assert response.json()["district"] == "shefshefit"
+    assert response.json()["street"] == "ham"
+    assert response.json()["house_number"] == 20
     assert response.json()["modified_by"] == USER_ID
 
 

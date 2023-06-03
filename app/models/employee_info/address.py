@@ -14,6 +14,8 @@ class AddressBase(SQLModel):
     employee_uid: UUID = Field(nullable=False, foreign_key="employee.uid", unique=True)
     city: str = Field(nullable=False, max_length=100, min_length=1)
     district: str = Field(nullable=False, max_length=100, min_length=1)
+    street: str = Field(default="", nullable=False, max_length=100, min_length=0)
+    house_number: int = Field(default=0, nullable=False, ge=0)
 
 
 class AddressCreate(AddressBase):
@@ -28,6 +30,8 @@ class AddressUpdateBase(SQLModel):
 
     city: Optional[str]
     district: Optional[str]
+    street: Optional[str]
+    house_number: Optional[int]
 
 
 class AddressUpdate(AddressUpdateBase):
