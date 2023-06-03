@@ -40,7 +40,8 @@ class NationalService(str, Enum):
 
     RELEASED = ("released",)
     EXEMPTED = ("exempted",)
-    SERVING = "serving"
+    SERVING = ("serving",)
+    NOTCOMPLETED = "not completed"
 
 
 class EmployeeBase(SQLModel):
@@ -64,6 +65,11 @@ class EmployeeBase(SQLModel):
     is_terminated: bool = Field(default=False, nullable=False)
     nationality_uid: UUID = Field(nullable=False, foreign_key="nationality.uid")
     country_uid: UUID = Field(nullable=False, foreign_key="country.uid")
+    origin_of_birth: str = Field(
+        nullable=False,
+        max_length=100,
+        min_length=1,
+    )
     birth_place: str = Field(
         nullable=False,
         max_length=100,
@@ -75,6 +81,11 @@ class EmployeeBase(SQLModel):
         min_length=1,
     )
     mother_last_name: str = Field(
+        nullable=False,
+        max_length=100,
+        min_length=1,
+    )
+    mother_grandfather_name: str = Field(
         nullable=False,
         max_length=100,
         min_length=1,
@@ -107,6 +118,8 @@ class EmployeeBase(SQLModel):
             CheckConstraint("national_service in ('released', 'exempted', 'serving')"),
         ),
     )
+    apprenticeship_from_date: date = Field(nullable=False)
+    apprenticeship_to_date: date = Field(nullable=False)
 
     @validator("phone_number")
     def phone_number_must_contain_only_digits(cls, v):
@@ -137,14 +150,18 @@ class EmployeeUpdateBase(SQLModel):
     unit_uid: Optional[UUID]
     nationality_uid: Optional[UUID]
     birth_place: Optional[str]
+    origin_of_birth: Optional[str]
     mother_first_name: Optional[str]
     mother_last_name: Optional[str]
+    mother_grandfather_name: Optional[str]
     marital_status: Optional[MaritalStatus]
     educational_level_uid: Optional[UUID]
     phone_number: Optional[str]
     national_id: Optional[str]
     contract_type: Optional[ContractType]
     national_service: Optional[NationalService]
+    apprenticeship_from_date: Optional[date]
+    apprenticeship_to_date: Optional[date]
 
     @validator("phone_number")
     def phone_number_must_contain_only_digits(cls, v):

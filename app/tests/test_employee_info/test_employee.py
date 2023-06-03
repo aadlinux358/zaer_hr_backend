@@ -23,10 +23,14 @@ EMPLOYEE_TEST_DATA: Final = {
     "current_salary": 3000,
     "current_hire_date": "2015-04-21",
     "birth_place": "asmara",
+    "origin_of_birth": "areza",
     "mother_first_name": "abeba",
     "mother_last_name": "mebrahtu",
+    "mother_grandfather_name": "tewelde",
     "phone_number": "07112233",
     "national_id": "2345677",
+    "apprenticeship_from_date": "2015-04-22",
+    "apprenticeship_to_date": "2015-06-22",
 }
 
 
