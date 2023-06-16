@@ -132,3 +132,4 @@ dmypy.json
 .env
 check.sh
 hr_tmp/
+requirements.txt
