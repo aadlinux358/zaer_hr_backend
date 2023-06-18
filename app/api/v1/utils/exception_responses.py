@@ -16,6 +16,11 @@ async def superuser_or_error(user_claims: Optional[dict]) -> None:
             status_code=status.HTTP_401_UNAUTHORIZED, detail="insufficient privileges."
         )
 
+    if not user_claims.get("is_active"):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="inactive user."
+        )
+
 
 async def staff_user_or_error(user_claims: Optional[dict]) -> None:
     """Check if user is staff member."""
@@ -27,4 +32,9 @@ async def staff_user_or_error(user_claims: Optional[dict]) -> None:
     if not user_claims.get("is_staff"):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="insufficient privileges."
+        )
+
+    if not user_claims.get("is_active"):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="inactive user."
         )

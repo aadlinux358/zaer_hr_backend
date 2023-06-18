@@ -51,6 +51,7 @@ async def client() -> AsyncGenerator[AsyncClient, None]:
         user_claims = {
             "is_superuser": True,
             "is_staff": True,
+            "is_active": True,
         }
         access_token = AuthJWT().create_access_token(
             subject=USER_ID, user_claims=user_claims
