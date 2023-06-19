@@ -5,10 +5,16 @@ from uuid import UUID
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from app.api.v1.employee_info.queries import (
+    get_employee_relationships_query,
+    get_full_emp_info_by_uid_query,
+)
 from app.models.employee_info.employee import (
     EmployeeCreate,
     EmployeeDB,
+    EmployeeReadFull,
     EmployeeReadMany,
+    EmployeeReadManyFull,
     EmployeeUpdate,
 )
 
@@ -38,12 +44,29 @@ class EmployeeCRUD:
 
         return EmployeeReadMany(count=len(all_result), result=all_result)
 
+    async def read_many_full_info(self) -> EmployeeReadManyFull:
+        """Read many full employee records."""
+        statement = get_employee_relationships_query()
+        result = await self.session.exec(statement)
+        all_result = result.all()
+
+        return EmployeeReadManyFull(count=len(all_result), result=all_result)
+
     async def read_by_uid(self, employee_uid: UUID) -> Optional[EmployeeDB]:
         """Read employee by uid."""
         statement = select(EmployeeDB).where(EmployeeDB.uid == employee_uid)
         result = await self.session.exec(statement)  # type: ignore
         employee = result.one_or_none()
 
+        return employee
+
+    async def read_full_by_uid(self, employee_uid: UUID) -> Optional[EmployeeReadFull]:
+        """Read full employee info by uid."""
+        statement = get_full_emp_info_by_uid_query(employee_uid=employee_uid)
+        result = await self.session.exec(statement)
+        employee = result.one_or_none()
+        if employee:
+            return EmployeeReadFull(**employee._mapping)
         return employee
 
     async def update_employee(

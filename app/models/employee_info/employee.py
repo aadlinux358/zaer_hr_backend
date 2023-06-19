@@ -200,8 +200,55 @@ class EmployeeRead(EmployeeCreate):
     date_modified: datetime
 
 
+class EmployeeReadFull(SQLModel):
+    """Employee full info read one model."""
+
+    uid: UUID
+    badge_number: int
+    first_name: str
+    last_name: str
+    grandfather_name: str
+    gender: Gender
+    birth_date: date
+    current_salary: Decimal
+    current_hire_date: date
+    is_active: bool
+    is_terminated: bool
+    origin_of_birth: str
+    birth_place: str
+    mother_first_name: str
+    mother_last_name: str
+    mother_grandfather_name: str
+    marital_status: MaritalStatus
+    phone_number: str
+    national_id: str
+    contract_type: ContractType
+    national_service: NationalService
+    apprenticeship_from_date: date
+    apprenticeship_to_date: date
+    division: str
+    department: str
+    unit: str
+    section: str
+    country: str
+    nationality: str
+    educational_level: str
+    designation: str
+    created_by: UUID
+    modified_by: UUID
+    date_created: datetime
+    date_modified: datetime
+
+
 class EmployeeReadMany(SQLModel):
     """Employee read many model."""
 
     count: int
     result: list[EmployeeRead]
+
+
+class EmployeeReadManyFull(SQLModel):
+    """Employee read many full info model."""
+
+    count: int
+    result: list[EmployeeReadFull]

@@ -144,6 +144,59 @@ async def test_get_employees_list(client: AsyncClient, session: AsyncSession):
 
 
 @pytest.mark.asyncio
+async def test_get_full_employees_info_list(client: AsyncClient, session: AsyncSession):
+    related = await initialize_related_tables(session)
+    emp_one = copy.deepcopy(EMPLOYEE_TEST_DATA)
+    emp_one.update(phone_number="07112244", national_id="7654321`")
+    emp_two = copy.deepcopy(EMPLOYEE_TEST_DATA)
+    emp_two.update(phone_number="07112255", national_id="1234567")
+    emp_three = copy.deepcopy(EMPLOYEE_TEST_DATA)
+    emp_three.update(phone_number="07112266", national_id="9988776")
+    employees = [
+        EmployeeDB(
+            **emp_one,
+            designation_uid=related["designation"].uid,
+            nationality_uid=related["nationality"].uid,
+            section_uid=related["section"].uid,
+            educational_level_uid=related["educational_level"].uid,
+            country_uid=related["country"].uid,
+            created_by=uuid.UUID(USER_ID),
+            modified_by=uuid.UUID(USER_ID),
+        ),
+        EmployeeDB(
+            **emp_two,
+            designation_uid=related["designation"].uid,
+            nationality_uid=related["nationality"].uid,
+            section_uid=related["section"].uid,
+            educational_level_uid=related["educational_level"].uid,
+            country_uid=related["country"].uid,
+            created_by=uuid.UUID(USER_ID),
+            modified_by=uuid.UUID(USER_ID),
+        ),
+        EmployeeDB(
+            **emp_three,
+            designation_uid=related["designation"].uid,
+            nationality_uid=related["nationality"].uid,
+            section_uid=related["section"].uid,
+            educational_level_uid=related["educational_level"].uid,
+            country_uid=related["country"].uid,
+            created_by=uuid.UUID(USER_ID),
+            modified_by=uuid.UUID(USER_ID),
+        ),
+    ]
+    for employee in employees:
+        session.add(employee)
+    await session.commit()
+
+    response = await client.get(f"{ENDPOINT}/full")
+
+    assert response.status_code == status.HTTP_200_OK, response.json()
+    assert response.json()["count"] == 3
+    assert len(response.json()["result"]) == 3
+    assert isinstance(response.json()["result"], list)
+
+
+@pytest.mark.asyncio
 async def test_get_employee_by_uid(client: AsyncClient, session: AsyncSession):
     related = await initialize_related_tables(session)
     values = copy.deepcopy(EMPLOYEE_TEST_DATA)
@@ -164,6 +217,33 @@ async def test_get_employee_by_uid(client: AsyncClient, session: AsyncSession):
     response = await client.get(f"{ENDPOINT}/{employee.uid}")
     assert response.status_code == status.HTTP_200_OK, response.json()
     assert response.json()["uid"] == str(employee.uid)
+
+
+@pytest.mark.asyncio
+async def test_get_full_employee_info_by_id(client: AsyncClient, session: AsyncSession):
+    related = await initialize_related_tables(session)
+    values = copy.deepcopy(EMPLOYEE_TEST_DATA)
+    employee = EmployeeDB(
+        **values,
+        designation_uid=related["designation"].uid,
+        nationality_uid=related["nationality"].uid,
+        section_uid=related["section"].uid,
+        educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
+    )
+    session.add(employee)
+    await session.commit()
+    await session.refresh(employee)
+
+    response = await client.get(f"{ENDPOINT}/{employee.uid}/full")
+    assert response.status_code == status.HTTP_200_OK, response.json()
+    assert response.json()["uid"] == str(employee.uid)
+    assert response.json()["division"]
+    assert response.json()["department"]
+    assert response.json()["unit"]
+    assert response.json()["section"]
 
 
 @pytest.mark.asyncio

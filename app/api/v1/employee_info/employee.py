@@ -13,7 +13,9 @@ from app.models.employee_info.employee import (
     EmployeeBase,
     EmployeeCreate,
     EmployeeRead,
+    EmployeeReadFull,
     EmployeeReadMany,
+    EmployeeReadManyFull,
     EmployeeUpdate,
     EmployeeUpdateBase,
 )
@@ -48,6 +50,15 @@ async def create_employee(
     return employee
 
 
+@router.get("/full", response_model=EmployeeReadManyFull)
+async def read_many_full(employees: EmployeeCRUDDep, Authorize: AuthJWTDep):
+    """Read many full employee info."""
+    Authorize.jwt_required()
+    employee_list = await employees.read_many_full_info()
+
+    return employee_list
+
+
 @router.get("", response_model=EmployeeReadMany)
 async def read_many(employees: EmployeeCRUDDep, Authorize: AuthJWTDep):
     """Read many employees."""
@@ -55,6 +66,20 @@ async def read_many(employees: EmployeeCRUDDep, Authorize: AuthJWTDep):
     employee_list = await employees.read_many()
 
     return employee_list
+
+
+@router.get("/{employee_uid}/full", response_model=EmployeeReadFull)
+async def read_full_info_by_id(
+    employee_uid: UUID, employees: EmployeeCRUDDep, Authorize: AuthJWTDep
+) -> EmployeeReadFull:
+    """Read full employee info by uid."""
+    Authorize.jwt_required()
+    employee = await employees.read_full_by_uid(employee_uid)
+    if employee is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="employee not found."
+        )
+    return employee
 
 
 @router.get("/{employee_uid}", response_model=EmployeeRead)
