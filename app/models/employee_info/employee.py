@@ -200,11 +200,9 @@ class EmployeeRead(EmployeeCreate):
     date_modified: datetime
 
 
-class EmployeeReadFull(SQLModel):
+class EmployeeReadFull(EmployeeRead):
     """Employee full info read one model."""
 
-    uid: UUID
-    badge_number: int
     first_name: str
     last_name: str
     grandfather_name: str
@@ -234,10 +232,6 @@ class EmployeeReadFull(SQLModel):
     nationality: str
     educational_level: str
     designation: str
-    created_by: UUID
-    modified_by: UUID
-    date_created: datetime
-    date_modified: datetime
 
 
 class EmployeeReadMany(SQLModel):
