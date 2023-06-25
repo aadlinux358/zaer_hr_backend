@@ -1,7 +1,10 @@
 """Employee api endpoints module."""
+import pathlib
 from typing import Annotated
 from uuid import UUID
 
+import pandas as pd
+from fastapi.responses import FileResponse
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_jwt_auth import AuthJWT  # type: ignore
 from sqlalchemy.exc import IntegrityError
@@ -198,3 +201,17 @@ async def activate_employee(
             status_code=status.HTTP_404_NOT_FOUND, detail="employee not found."
         )
     return employee
+
+@router.get("/download/csv", response_class=FileResponse)
+async def download_csv(
+    employees: EmployeeCRUDDep, Authorize: AuthJWTDep
+) -> FileResponse:
+    """Download employees as csv."""
+    Authorize.jwt_required()
+    divisions_list = await employees.read_many_full_info()
+    df = pd.DataFrame([d.dict() for d in divisions_list.result])
+    # TODO remove this when app lifespan works with pytest and httpx
+    p = pathlib.Path("hr_tmp")
+    p.mkdir(exist_ok=True)
+    df.to_csv("hr_tmp/employees.csv", index=False)
+    return FileResponse("hr_tmp/employees.csv")

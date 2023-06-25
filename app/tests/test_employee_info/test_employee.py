@@ -389,3 +389,11 @@ async def test_can_activate_employee(client: AsyncClient, session: AsyncSession)
     assert response.status_code == status.HTTP_201_CREATED
     assert response.json()["is_active"] is True
     assert response.json()["is_terminated"] is False
+
+
+@pytest.mark.asyncio
+async def test_download_csv(client: AsyncClient, session: AsyncSession):
+    response = await client.get(f"{ENDPOINT}/download/csv")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert "text/csv" in response.headers["Content-Type"]
