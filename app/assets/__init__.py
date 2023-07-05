@@ -1,0 +1,1 @@
+"""HR assets package."""

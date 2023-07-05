@@ -83,3 +83,12 @@ def get_full_emp_info_by_uid_query(employee_uid: UUID):
     statement = get_employee_relationships_query().where(EmployeeDB.uid == employee_uid)
 
     return statement
+
+
+def get_full_emp_info_by_badge_number_query(badge_number: int):
+    """Create single employee by badge number and related tables join queries."""
+    statement = get_employee_relationships_query().where(
+        EmployeeDB.badge_number == badge_number
+    )
+
+    return statement

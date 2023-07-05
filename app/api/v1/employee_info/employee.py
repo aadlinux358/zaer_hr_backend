@@ -1,16 +1,22 @@
 """Employee api endpoints module."""
+import base64
+import os
 import pathlib
 from typing import Annotated
 from uuid import UUID
 
 import pandas as pd
-from fastapi.responses import FileResponse
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import FileResponse, Response
 from fastapi_jwt_auth import AuthJWT  # type: ignore
 from sqlalchemy.exc import IntegrityError
 
-from app.api.v1.employee_info.dependencies import get_employee_crud
+from app.api.v1.employee_info.dependencies import (
+    get_employee_crud,
+    get_termination_crud,
+)
 from app.api.v1.employee_info.employee_crud import EmployeeCRUD
+from app.api.v1.employee_info.termination_crud import TerminationCRUD
 from app.api.v1.utils.exception_responses import staff_user_or_error
 from app.models.employee_info.employee import (
     EmployeeBase,
@@ -19,15 +25,19 @@ from app.models.employee_info.employee import (
     EmployeeReadFull,
     EmployeeReadMany,
     EmployeeReadManyFull,
+    EmployeeSeverancePay,
     EmployeeUpdate,
     EmployeeUpdateBase,
 )
+from app.models.employee_info.termination import TerminationRead
+from app.reports.severance_pay import SeverancePayReport
 from app.utils.lower_case_attrs import lower_str_attrs
 
 router = APIRouter(prefix="/employees", tags=["employee"])
 
 EmployeeCRUDDep = Annotated[EmployeeCRUD, Depends(get_employee_crud)]
 AuthJWTDep = Annotated[AuthJWT, Depends()]
+TerminationCRUDDep = Annotated[TerminationCRUD, Depends(get_termination_crud)]
 
 
 @router.post("", response_model=EmployeeRead, status_code=status.HTTP_201_CREATED)
@@ -202,6 +212,7 @@ async def activate_employee(
         )
     return employee
 
+
 @router.get("/download/csv", response_class=FileResponse)
 async def download_csv(
     employees: EmployeeCRUDDep, Authorize: AuthJWTDep
@@ -215,3 +226,76 @@ async def download_csv(
     p.mkdir(exist_ok=True)
     df.to_csv("hr_tmp/employees.csv", index=False)
     return FileResponse("hr_tmp/employees.csv")
+
+
+@router.get("/badge-number/{badge_number}", response_model=EmployeeReadFull)
+async def read_by_badge_number(
+    badge_number: int, employees: EmployeeCRUDDep, Authorize: AuthJWTDep
+) -> EmployeeReadFull:
+    """Read employee by badge number."""
+    Authorize.jwt_required()
+    employee = await employees.read_full_by_badge_number(badge_number=badge_number)
+    if employee is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="employee not found."
+        )
+    return employee
+
+
+@router.get("/severance-pay/{badge_number}", response_class=Response)
+async def calculate_severance_pay(
+    badge_number: int,
+    employees: EmployeeCRUDDep,
+    terminations: TerminationCRUDDep,
+    Authorize: AuthJWTDep,
+) -> Response:
+    """Calculate employee severance pay."""
+    Authorize.jwt_required()
+    user_claims = Authorize.get_raw_jwt()
+    await staff_user_or_error(user_claims=user_claims)
+
+    employee = await employees.read_full_by_badge_number(badge_number=badge_number)
+    if employee is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="employee not found."
+        )
+    if employee.is_terminated is False:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="employee is not terminated.",
+        )
+    emp_terminations = await terminations.read_many_by_employee(employee.uid)
+    if not emp_terminations.count:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="no termination data found."
+        )
+
+    def filter_hire_date(t: TerminationRead) -> bool:
+        if employee is None:
+            return False
+        return t.hire_date == employee.current_hire_date
+
+    if emp_terminations.count > 1:
+        termination = list(
+            filter(  # type: ignore
+                filter_hire_date,
+                emp_terminations.result,
+            )
+        )[0]
+    else:
+        termination = emp_terminations.result[0]  # type: ignore
+
+    emp_sev = EmployeeSeverancePay(
+        **employee.dict(), termination_date=termination.termination_date
+    )
+    p = pathlib.Path("hr_tmp")
+    p.mkdir(exist_ok=True)
+    old_path = os.getcwd()
+    os.chdir(p)
+    sr = SeverancePayReport(emp_sev)
+    filename = sr.create_report()
+    os.chdir(old_path)
+    file_path = p / filename
+    with open(file_path, "rb") as pdf_file:
+        encoded_string = base64.b64encode(pdf_file.read())
+        return Response(content=encoded_string, media_type="application/pdf")

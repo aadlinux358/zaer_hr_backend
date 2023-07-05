@@ -7,6 +7,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.api.v1.employee_info.queries import (
     get_employee_relationships_query,
+    get_full_emp_info_by_badge_number_query,
     get_full_emp_info_by_uid_query,
 )
 from app.models.employee_info.employee import (
@@ -63,6 +64,17 @@ class EmployeeCRUD:
     async def read_full_by_uid(self, employee_uid: UUID) -> Optional[EmployeeReadFull]:
         """Read full employee info by uid."""
         statement = get_full_emp_info_by_uid_query(employee_uid=employee_uid)
+        result = await self.session.exec(statement)
+        employee = result.one_or_none()
+        if employee:
+            return EmployeeReadFull(**employee._mapping)
+        return employee
+
+    async def read_full_by_badge_number(
+        self, badge_number: int
+    ) -> Optional[EmployeeReadFull]:
+        """Read full employee info by badge number."""
+        statement = get_full_emp_info_by_badge_number_query(badge_number=badge_number)
         result = await self.session.exec(statement)
         employee = result.one_or_none()
         if employee:

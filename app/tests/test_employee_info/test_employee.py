@@ -1,6 +1,7 @@
 """Employee api tests module."""
 import copy
 import uuid
+from datetime import date
 from typing import Final
 
 import pytest
@@ -9,6 +10,7 @@ from httpx import AsyncClient
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models import EmployeeDB
+from app.models.employee_info.termination import TerminationDB
 
 from .employee_related_data import initialize_related_tables
 
@@ -220,6 +222,29 @@ async def test_get_employee_by_uid(client: AsyncClient, session: AsyncSession):
 
 
 @pytest.mark.asyncio
+async def test_get_employee_by_badge_number(client: AsyncClient, session: AsyncSession):
+    related = await initialize_related_tables(session)
+    values = copy.deepcopy(EMPLOYEE_TEST_DATA)
+    employee = EmployeeDB(
+        **values,
+        designation_uid=related["designation"].uid,
+        nationality_uid=related["nationality"].uid,
+        section_uid=related["section"].uid,
+        educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
+    )
+    session.add(employee)
+    await session.commit()
+    await session.refresh(employee)
+
+    response = await client.get(f"{ENDPOINT}/badge-number/{employee.badge_number}")
+    assert response.status_code == status.HTTP_200_OK, response.json()
+    assert response.json()["badge_number"] == employee.badge_number
+
+
+@pytest.mark.asyncio
 async def test_get_full_employee_info_by_id(client: AsyncClient, session: AsyncSession):
     related = await initialize_related_tables(session)
     values = copy.deepcopy(EMPLOYEE_TEST_DATA)
@@ -397,3 +422,39 @@ async def test_download_csv(client: AsyncClient, session: AsyncSession):
 
     assert response.status_code == status.HTTP_200_OK
     assert "text/csv" in response.headers["Content-Type"]
+
+
+@pytest.mark.asyncio
+async def test_employee_severance_pay(client: AsyncClient, session: AsyncSession):
+    related = await initialize_related_tables(session)
+    values = copy.deepcopy(EMPLOYEE_TEST_DATA)
+    employee = EmployeeDB(
+        **values,
+        is_terminated=True,
+        designation_uid=related["designation"].uid,
+        nationality_uid=related["nationality"].uid,
+        section_uid=related["section"].uid,
+        educational_level_uid=related["educational_level"].uid,
+        country_uid=related["country"].uid,
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
+    )
+    session.add(employee)
+    await session.commit()
+    await session.refresh(employee)
+
+    termination = TerminationDB(
+        employee_uid=employee.uid,
+        hire_date=employee.current_hire_date,
+        termination_date=date(2023, 3, 1),
+        created_by=uuid.UUID(USER_ID),
+        modified_by=uuid.UUID(USER_ID),
+    )
+    session.add(termination)
+    await session.commit()
+    await session.refresh(termination)
+
+    response = await client.get(f"{ENDPOINT}/severance-pay/{employee.badge_number}")
+
+    assert response.status_code == status.HTTP_200_OK, response.json()
+    assert "application/pdf" in response.headers["Content-Type"]

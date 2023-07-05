@@ -246,3 +246,16 @@ class EmployeeReadManyFull(SQLModel):
 
     count: int
     result: list[EmployeeReadFull]
+
+
+class EmployeeSeverancePay(SQLModel):
+    """Employee model for severance pay calculation."""
+
+    badge_number: int
+    first_name: str
+    last_name: str
+    grandfather_name: str
+    current_hire_date: date
+    termination_date: date
+    department: str
+    current_salary: Decimal
