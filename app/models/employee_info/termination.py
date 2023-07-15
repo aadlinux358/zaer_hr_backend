@@ -27,7 +27,7 @@ class TerminationUpdateBase(SQLModel):
     """Termination update model."""
 
     employee_uid: Optional[UUID]
-    hire_date: Optional[UUID]
+    hire_date: Optional[date]
     termination_date: Optional[date]
 
 
